@@ -35,9 +35,9 @@ public class MainActivity extends Activity {
         chatMessages = new ArrayList<ChatMessage>();
 
         //just for the prototype
-        ChatMessage cm = new ChatMessage(1,"Hello world!" ,"Anon");
-        ChatMessage cm1 = new ChatMessage(1,"Hello world!2" ,"Anon");
-        ChatMessage cm2 = new ChatMessage(1,"Hello world!3" ,"Anon");
+        ChatMessage cm = new ChatMessage(1,"Hello world!", true, 60.0, 60.0,"Anon");
+        ChatMessage cm1 = new ChatMessage(1,"Hello world!2", true, 60.0, 60.0,"Anon");
+        ChatMessage cm2 = new ChatMessage(1,"Hello world!3",true, 60.0, 60.0 ,"Anon");
         chatMessages.add(cm);
         chatMessages.add(cm1);
         chatMessages.add(cm2);
@@ -119,9 +119,11 @@ public class MainActivity extends Activity {
             convertView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
+                    /*
+                    Toast.makeText(getApplicationContext(), String.valueOf(currentMessage.getMsg()),
+                            Toast.LENGTH_SHORT).show();*/
 
-                    Toast.makeText(getApplicationContext(), "Long Clicked ",
-                            Toast.LENGTH_SHORT).show();
+                    /*JOKKE currentMessage.getLat....*/
                     return true;
                 }
             });
