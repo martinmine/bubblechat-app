@@ -2,8 +2,8 @@
 
     <CheckBoxPreference
         android:key="example_checkbox"
-        android:title="@string/pref_title_social_recommendations"
-        android:summary="@string/pref_description_social_recommendations"
+        android:title="@string/settings_title_trackme"
+        android:summary="@string/settings_summary_trackme"
         android:defaultValue="true" />
 
     <!-- NOTE: EditTextPreference accepts EditText attributes. -->
