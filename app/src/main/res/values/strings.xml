@@ -7,5 +7,6 @@
     <string name="title_activity_maps">Map</string>
     <string name="settings_title_trackme">Track me</string>
     <string name="settings_summary_trackme">Other users can see your position</string>
+    <string name="pref_hint_display_name">type a nickname</string>
 
 </resources>

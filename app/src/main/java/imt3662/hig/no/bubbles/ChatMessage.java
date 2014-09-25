@@ -2,6 +2,8 @@ package imt3662.hig.no.bubbles;
 
 import android.graphics.Color;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.Random;
 
 /**
@@ -11,17 +13,17 @@ public class ChatMessage {
     private int userID;
     private String msg;
     private boolean hasLocation;
-    private double latitude;
-    private double longitude;
+    private String latitude;
+    private String longitude;
     private String username;
     private int color;
 
-    public ChatMessage(int userID, String msg, boolean hasLocation, double latitude, double longitude, String username) {
+    public ChatMessage(int userID, String msg, boolean hasLocation, double latit, double longi, String username) {
         this.userID = userID;
         this.msg = msg;
         this.hasLocation = hasLocation;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.latitude =  String.valueOf(latit);
+        this.longitude = String.valueOf(longi);
         this.username = username;
 
         Color c = new Color();
@@ -50,13 +52,9 @@ public class ChatMessage {
         return hasLocation;
     }
 
-    public double getLatitude() {
-        return latitude;
-    }
+    public String getLatitude() { return latitude; }
 
-    public double getLongitude() {
-        return longitude;
-    }
+    public String getLongitude() { return longitude; }
 
     public String getUsername() {
         return username;

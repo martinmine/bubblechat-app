@@ -31,6 +31,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        LocationProvider locationProvider = new LocationProvider(this);
         chatMessages = new ArrayList<ChatMessage>();
 
         //just for the prototype
