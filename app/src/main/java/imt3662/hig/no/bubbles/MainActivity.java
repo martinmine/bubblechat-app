@@ -10,8 +10,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.List;
+
 
 public class MainActivity extends Activity {
+    List<ChatMessage> chatMessages;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,35 +23,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
 
-        Button settings = (Button) findViewById(R.id.settingsButton);
-        Button goMap = (Button) findViewById(R.id.mapButton);
 
-
-        settings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        goMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                double latitude;
-                double longitude;
-
-                EditText lati = (EditText) findViewById(R.id.lati);
-                latitude = Double.parseDouble(lati.getText().toString());
-                EditText longi = (EditText) findViewById(R.id.longi);
-                longitude = Double.parseDouble(longi.getText().toString());
-
-                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-                intent.putExtra("LATITUDE", latitude);
-                intent.putExtra("LONGITUDE", longitude);
-                startActivity(intent);
-            }
-        });
     }
 
 
@@ -65,7 +41,8 @@ public class MainActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            return true;
+            Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
