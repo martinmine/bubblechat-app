@@ -1,1 +1,1 @@
-include ':app', ':BubbleCloud'
+include ':app'

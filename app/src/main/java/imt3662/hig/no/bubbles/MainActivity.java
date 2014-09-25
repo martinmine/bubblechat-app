@@ -25,17 +25,18 @@ import java.util.List;
 public class MainActivity extends Activity {
     List<ChatMessage> chatMessages;
 
+    LocationProvider locationProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        LocationProvider locationProvider = new LocationProvider(this);
+        this.locationProvider = new LocationProvider(this);
         chatMessages = new ArrayList<ChatMessage>();
 
         //just for the prototype
-        ChatMessage cm = new ChatMessage(1,"Hello world!", true, 60.0, 60.0,"Anon");
+        ChatMessage cm = new ChatMessage(1,"Hello world!", true, 60.0, 9.0,"Pels");
         ChatMessage cm1 = new ChatMessage(1,"Hello world!2", true, 60.0, 60.0,"Anon");
         ChatMessage cm2 = new ChatMessage(1,"Hello world!3",true, 60.0, 60.0 ,"Anon");
         chatMessages.add(cm);
@@ -119,11 +120,15 @@ public class MainActivity extends Activity {
             convertView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    /*
-                    Toast.makeText(getApplicationContext(), String.valueOf(currentMessage.getMsg()),
-                            Toast.LENGTH_SHORT).show();*/
 
-                    /*JOKKE currentMessage.getLat....*/
+                    Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                    intent.putExtra("TRACED_LATITUDE", currentMessage.getLatitude());
+                    intent.putExtra("TRACED_LONGITUDE", currentMessage.getLongitude());
+                    intent.putExtra("TRACED_USERNAME", currentMessage.getUsername());
+                    intent.putExtra("LATITUDE", "60.0");
+                    intent.putExtra("LONGITUDE", "60.0");
+                    startActivity(intent);
+
                     return true;
                 }
             });
