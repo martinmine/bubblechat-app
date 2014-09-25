@@ -23,24 +23,7 @@ public class MapsActivity extends FragmentActivity {
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
 
-        Intent intent = getIntent();
-        double latitude = intent.getDoubleExtra("LATITUDE", 0);
-        double longitude = intent.getDoubleExtra("LONGITUDE", 0);
-        double tracedMessageLatitude = intent.getDoubleExtra("TRACED_LATITUDE", 0);
-        double tracedMessageLongitude = intent.getDoubleExtra("TRACED_LONGITUDE", 0);
-        String tracedMessageUsername = intent.getStringExtra("TRACKED_USERNAME");
 
-        position(latitude,longitude,2000);
-
-        if (tracedMessageLatitude != 0 && tracedMessageLongitude != 0) {
-            if (tracedMessageUsername.length() > 0) {
-                setTracedMessageMarker(new LatLng(tracedMessageLatitude, tracedMessageLongitude),
-                                                                         tracedMessageUsername);
-            }
-            else
-                setTracedMessageMarker(new LatLng(tracedMessageLatitude, tracedMessageLongitude),
-                                                                         "Anonymous user");
-        }
     }
 
     @Override
@@ -79,20 +62,49 @@ public class MapsActivity extends FragmentActivity {
 
     /**
      * This is where we can add markers or lines, add listeners or move the camera. In this case, we
-     * just add a marker near Africa.
-     * <p>
-     * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
 
+        double userLatitude;
+        double userLongitude;
+        double trackedMessageLatitude;
+        double trackedMessageLongitude;
+
+        Intent intent = getIntent();
+        String latitude = intent.getStringExtra("LATITUDE");
+        String longitude = intent.getStringExtra("LONGITUDE");
+        String tracedMessageLatitude = intent.getStringExtra("TRACED_LATITUDE");
+        String tracedMessageLongitude = intent.getStringExtra("TRACED_LONGITUDE");
+        String tracedMessageUsername = intent.getStringExtra("TRACED_USERNAME");
+
+        if ((latitude.length() > 0 || latitude != null) &&
+                (longitude.length() > 0 || longitude == null)) {
+            userLatitude = Double.parseDouble(latitude);
+            userLongitude = Double.parseDouble(longitude);
+            // Setting user position with marker and circle displaying broadcasting area
+            position(new LatLng(userLatitude, userLongitude), 2000);
+
+            if ((tracedMessageLatitude.length() > 0 || tracedMessageLatitude == null) &&
+                    (tracedMessageLongitude.length() > 0 || tracedMessageLongitude == null)) {
+                trackedMessageLatitude = Double.parseDouble(tracedMessageLatitude);
+                trackedMessageLongitude = Double.parseDouble(tracedMessageLongitude);
+                // If a username was found for the tracked message
+                if (tracedMessageUsername.length() > 0) {
+                    setTracedMessageMarker(new LatLng(trackedMessageLatitude, trackedMessageLongitude),
+                            tracedMessageUsername);
+                } else  // Place pin as Anonymous user
+                    setTracedMessageMarker(new LatLng(trackedMessageLatitude, trackedMessageLongitude),
+                            "Anonymous user");
+            }
+        }
     }
 
-    private void position(double latitude, double longitude, int radius) {
-        LatLng latLng = new LatLng(latitude, longitude);
+    private void position(LatLng latLng, int radius) {
+
         mMap.addMarker(new MarkerOptions().position(latLng).title("You are here"));
         CircleOptions circleOptions = new CircleOptions()
-                .center(new LatLng(latitude, longitude))   //set center
-                .radius(5000)   //set radius in meters
+                .center(latLng)   //set center
+                .radius(radius)   //set radius in meters
                 .fillColor(0x408FA1F9)  // light blue
                 .strokeColor(Color.BLUE)
                 .strokeWidth(1);
