@@ -24,6 +24,8 @@ import java.util.List;
 
 public class MainActivity extends Activity {
     List<ChatMessage> chatMessages;
+    private static final float chatMsgRadius = 20.0F; //radius of chat messages
+
 
     LocationProvider locationProvider;
 
@@ -35,7 +37,7 @@ public class MainActivity extends Activity {
         this.locationProvider = new LocationProvider(this);
         chatMessages = new ArrayList<ChatMessage>();
 
-        //just for the prototype
+        //test chat messages
         ChatMessage cm = new ChatMessage(1,"Hello world!", true, 60.0, 9.0,"Pels");
         ChatMessage cm1 = new ChatMessage(1,"Hello world!2", true, 60.0, 60.0,"Anon");
         ChatMessage cm2 = new ChatMessage(1,"Hello world!3",true, 60.0, 60.0 ,"Anon");
@@ -62,7 +64,7 @@ public class MainActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_settings) {//when settings button is pressed, setting act. starts
             Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
             startActivity(intent);
         }
@@ -89,33 +91,25 @@ public class MainActivity extends Activity {
             final ChatMessage currentMessage = chatMessages.get(position);
 
 
-            TextView txtView = (TextView) convertView.findViewById(R.id.text1);
+            TextView msgText = (TextView) convertView.findViewById(R.id.msgText);
 
             RelativeLayout rv = (RelativeLayout) convertView.findViewById(R.id.relativeLayout);
 
 
             ShapeDrawable shapeDrawable = new ShapeDrawable();
-            float[] radius = new float[8];
-            radius[0] = 20.0F;
-            radius[1] = 20.0F;
-            radius[2] = 20.0F;
-            radius[3] = 20.0F;
-            radius[4] = 20.0F;
-            radius[5] = 20.0F;
-            radius[6] = 20.0F;
-            radius[7] = 20.0F;
 
-
-            //Color c = new Color();
-            //int colorint = c.argb(255, new Random().nextInt(255), new Random().nextInt(255), new Random().nextInt(255));
-            shapeDrawable.setShape(new RoundRectShape(radius, null, radius));
-
+            //creating the graphics for the chat message
+            float[] rad = {chatMsgRadius, chatMsgRadius, chatMsgRadius, chatMsgRadius,
+                    chatMsgRadius, chatMsgRadius, chatMsgRadius, chatMsgRadius};
+            shapeDrawable.setShape(new RoundRectShape(rad, null, rad));
             shapeDrawable.getPaint().setColor(currentMessage.getColor());
-
             rv.setBackground(shapeDrawable);
 
+            if(currentMessage.getUsername() != null){
+                msgText.setText(currentMessage.getUsername() + ": ");
+            }
+            msgText.append(currentMessage.getMsg());
 
-            txtView.setText(currentMessage.getUsername() + ": " + currentMessage.getMsg());
 
             convertView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -148,12 +142,12 @@ public class MainActivity extends Activity {
 
     }
 
-    //prototype for testing the chat
+    //used for testing the chat locally
     public void newMessage(View view) {
 
         EditText editText = (EditText)findViewById(R.id.editText);
         if(editText.getText().length() > 0) {
-            ChatMessage newmsg = new ChatMessage(1, String.valueOf(editText.getText()), "Anon");
+            ChatMessage newmsg = new ChatMessage(1,String.valueOf(editText.getText()), true, 60.1, 60.1, "Meg");
             chatMessages.add(newmsg);
             editText.setText("");
 
@@ -165,7 +159,7 @@ public class MainActivity extends Activity {
 
     }
 
-    //prototype. this is here just because.
+    //this is here just because.
     public void toast(View view) {
         Toast.makeText(getApplicationContext(), "Valg",
                 Toast.LENGTH_SHORT).show();
