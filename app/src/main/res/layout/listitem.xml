@@ -21,22 +21,21 @@
         android:layout_alignLeft="@id/listview"
         android:id="@+id/relativeLayout">
 
-        <ImageButton
+        <Spinner
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:id="@+id/imageButton"
+            android:id="@+id/msgSpinner"
             android:background="@drawable/options2"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:alpha=".30"
-            android:onClick="toast" />
+            android:alpha=".30"/>
 
         <TextView
             android:textColor="#000"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/imageButton"
+            android:layout_toLeftOf="@id/msgSpinner"
             android:id="@+id/msgText" />
     </RelativeLayout>
 

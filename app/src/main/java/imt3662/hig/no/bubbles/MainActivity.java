@@ -11,11 +11,14 @@ import android.graphics.drawable.shapes.RoundRectShape;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -38,6 +41,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     private static final float chatMsgRadius = 20.0F; //radius of chat messages
     private GcmHelper gcm;
     private int currentUserID;
+    int longPressedMsgPosition = -1;
 
     private LocationProvider locationProvider;
 
@@ -47,6 +51,9 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         setContentView(R.layout.activity_main);
 
         this.locationProvider = new LocationProvider(this, this);
+        ListView lv = (ListView) findViewById(R.id.listview);
+        registerForContextMenu(lv);
+
         chatMessages = new ArrayList<ChatMessage>();
 
         //test chat messages
@@ -190,7 +197,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
             }
             msgText.append(currentMessage.getMsg());
 
-
+            /*
             convertView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -205,7 +212,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
 
                     return true;
                 }
-            });
+            });*/
 
             return convertView;
         }
@@ -244,6 +251,53 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     public void toast(View view) {
         Toast.makeText(getApplicationContext(), "Valg",
                 Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+
+        inflater.inflate(R.menu.msg_long_click, menu);
+
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        longPressedMsgPosition = info.position;
+
+
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId()) {
+            case R.id.findOnMap:
+                ChatMessage msg = chatMessages.get(longPressedMsgPosition);
+
+
+
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                intent.putExtra("TRACED_LATITUDE", msg.getLatitude());
+                intent.putExtra("TRACED_LONGITUDE", msg.getLongitude());
+                intent.putExtra("TRACED_USERNAME", msg.getUsername());
+                intent.putExtra("LATITUDE", "60.0");
+                intent.putExtra("LONGITUDE", "60.0");
+                startActivity(intent);
+
+
+
+                return true;
+            case R.id.ignore:
+
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+
+
 
     }
 }
