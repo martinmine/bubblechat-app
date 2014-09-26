@@ -14,10 +14,12 @@ public class LocationProvider {
     private LocationManager locationManager;
     private LocationListener locationListener;
     private LatLng location;
+    private LocationReceiver listener;
 
-    public LocationProvider(final Context context) {
+    public LocationProvider(final Context context, final LocationReceiver listener) {
 
         this.locationManager =  (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        this.listener = listener;
         this.locationListener = new LocationListener() {
 
             @Override
@@ -28,6 +30,7 @@ public class LocationProvider {
                 latitude = loc.getLatitude();
                 longitude = loc.getLongitude();
                 location = new LatLng(latitude, longitude);
+                listener.locationChanged(loc);
             }
 
             @Override

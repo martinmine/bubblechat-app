@@ -3,9 +3,14 @@ package imt3662.hig.no.bubbles;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
+import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,23 +23,30 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import imt3662.hig.no.bubbles.MessageHandling.MessageDelegater;
+import imt3662.hig.no.bubbles.MessageHandling.MessageEventHandler;
+import imt3662.hig.no.bubbles.MessageSerializing.PostChatMessage;
+import imt3662.hig.no.bubbles.MessageSerializing.ServerStatusRequest;
 
-public class MainActivity extends Activity {
-    List<ChatMessage> chatMessages;
+
+public class MainActivity extends Activity implements MessageEventHandler, MessageErrorListener, LocationReceiver {
+    private List<ChatMessage> chatMessages;
     private static final float chatMsgRadius = 20.0F; //radius of chat messages
+    private GcmHelper gcm;
+    private int currentUserID;
 
-
-    LocationProvider locationProvider;
+    private LocationProvider locationProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.locationProvider = new LocationProvider(this);
+        this.locationProvider = new LocationProvider(this, this);
         chatMessages = new ArrayList<ChatMessage>();
 
         //test chat messages
@@ -48,14 +60,82 @@ public class MainActivity extends Activity {
 
         populateListView();
 
+        if (!GcmHelper.checkPlayServices(this)) {
+            // TODO show error message that the user needs to upgrade google play services
+        }
+
+        SharedPreferences prefs = getSharedPreferences(MainActivity.class.getSimpleName(),
+                Context.MODE_PRIVATE);
+
+        this.gcm = new GcmHelper(this, this);
+        this.currentUserID = -1;
+        this.gcm.beginRegistering(prefs, getAppVersion(this), new DeviceRegisteredListener() {
+            @Override
+            public void registered(String gcmId) {
+                Log.i("gcm", "Registered on gcm with id " + gcmId);
+            }
+        });
+
+        MessageDelegater.getInstance().setReceiver(this);
     }
 
+    /**
+     * @return Current application version
+     * Code from google tutorial
+     */
+    private static int getAppVersion(Context context) {
+        try {
+            PackageInfo packageInfo = context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(), 0);
+            return packageInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            // should never happen
+            throw new RuntimeException("Could not get package name: " + e);
+        }
+    }
+
+    @Override
+    public void failedToSend(IOException ex) {
+        Log.w("gcm", "Failed to send message: " + ex.getMessage());
+    }
+
+    @Override
+    public void messagePosted(int userId, String message, boolean hasLocation, double lat, double lng, String username) {
+        Log.i("gcm", "posted a message: " + message);
+    }
+
+    @Override
+    public void nodeEntered(int userId) {
+        Log.i("gcm", "node entered: " + userId);
+        // TODO add message bubble
+    }
+
+    @Override
+    public void nodeLeft(int userId) {
+        Log.i("gcm", "node left: " + userId);
+        // TODO add message bubble
+    }
+
+    @Override
+    public void gotServerInfo(int userCount, int userId) {
+        Log.i("gcm", "Got server info count: " + userCount + ", your user ID: " + userId);
+        this.currentUserID = userId;
+        // TODO update user count thingy
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @Override
+    public void locationChanged(Location loc) {
+        if (currentUserID == -1 && !gcm.getRegistrationId().isEmpty()) {
+            currentUserID = 0;
+            gcm.sendMessage(new ServerStatusRequest(loc.getLatitude(), loc.getLongitude()));
+        }
     }
 
     @Override
@@ -83,7 +163,7 @@ public class MainActivity extends Activity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
-            if(convertView == null) {
+            if (convertView == null) {
 
                 convertView = getLayoutInflater().inflate(R.layout.listitem, parent, false);
             }
@@ -142,13 +222,14 @@ public class MainActivity extends Activity {
 
     }
 
-    //used for testing the chat locally
+    //used for testing the chat locally (AND NOW TOWARDS THE SERVER!)
     public void newMessage(View view) {
 
         EditText editText = (EditText)findViewById(R.id.editText);
-        if(editText.getText().length() > 0) {
-            ChatMessage newmsg = new ChatMessage(1,String.valueOf(editText.getText()), true, 60.1, 60.1, "Meg");
-            chatMessages.add(newmsg);
+        if (editText.getText().length() > 0 && this.currentUserID > 0) {
+            ChatMessage newMsg = new ChatMessage(0,String.valueOf(editText.getText()), true, 60.1, 60.1, "Meg");
+            gcm.sendMessage(new PostChatMessage(newMsg));
+            chatMessages.add(newMsg);
             editText.setText("");
 
             InputMethodManager imm = (InputMethodManager) getSystemService(
