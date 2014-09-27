@@ -102,7 +102,6 @@ public class InitiatorActivity extends Activity implements LocationReceiver, Mes
         intent.putExtra("user_id", userId);
         this.locationProvider.destroy();
         startActivity(intent);
-
         finish();
     }
 
@@ -140,3 +139,4 @@ public class InitiatorActivity extends Activity implements LocationReceiver, Mes
         }
     }
 }
+    
