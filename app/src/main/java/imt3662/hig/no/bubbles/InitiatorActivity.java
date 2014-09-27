@@ -10,7 +10,16 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+<<<<<<< HEAD
+=======
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.ListView;
+>>>>>>> 4255d4454e70558fae7e9b1065e27805d786e419
 import android.widget.TextView;
+import com.google.android.gms.maps.model.LatLng;
+
+import com.google.android.gms.games.Notifications;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
@@ -40,7 +49,11 @@ public class InitiatorActivity extends Activity implements LocationReceiver, Mes
 
         MessageDelegater.getInstance().setReceiver(this);
         this.gcm.beginRegistering(prefs, getAppVersion(this), this);
+<<<<<<< HEAD
         this.locationProvider = LocationProvider.get(this,this);
+=======
+        this.locationProvider = new LocationProvider(this, this);
+>>>>>>> 4255d4454e70558fae7e9b1065e27805d786e419
     }
 
     /**
@@ -90,7 +103,13 @@ public class InitiatorActivity extends Activity implements LocationReceiver, Mes
 
     @Override
     public void gotServerInfo(int userCount, int userId) {
+<<<<<<< HEAD
 
+=======
+        return;
+        /*
+        // go to main activity
+>>>>>>> 4255d4454e70558fae7e9b1065e27805d786e419
         setLoadingText("Done!");
         MessageDelegater.getInstance().setReceiver(null);
         Intent intent = new Intent(getBaseContext(), MainActivity.class);
@@ -98,7 +117,11 @@ public class InitiatorActivity extends Activity implements LocationReceiver, Mes
         intent.putExtra("user_id", userId);
         this.locationProvider.destroy();
         startActivity(intent);
+<<<<<<< HEAD
         finish();
+=======
+        finish();*/
+>>>>>>> 4255d4454e70558fae7e9b1065e27805d786e419
     }
 
     private void makeContact(LatLng loc) {
@@ -135,4 +158,8 @@ public class InitiatorActivity extends Activity implements LocationReceiver, Mes
         }
     }
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 4255d4454e70558fae7e9b1065e27805d786e419

@@ -33,14 +33,11 @@ public class LocationProvider {
 
             @Override
             public void onLocationChanged(Location loc) {
-                double latitude;
-                double longitude;
                 Log.i("Location provider", "Got location: " + loc.getLatitude() + "," + loc.getLongitude());
+                location = new LatLng(loc.getLatitude(), loc.getLongitude());
 
-                latitude = loc.getLatitude();
-                longitude = loc.getLongitude();
-                location = new LatLng(latitude, longitude);
-                listener.locationChanged(loc);
+                if (listener != null)
+                    listener.locationChanged(loc);
             }
 
             @Override
@@ -57,6 +54,9 @@ public class LocationProvider {
             }
         };
 
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        /*
+        Joakim should feel free to fix this tomorrow
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
         criteria.setAltitudeRequired(false);
@@ -81,7 +81,7 @@ public class LocationProvider {
 
                 Log.i("PROVIDER", "GPS IS SET");
             }
-        }
+        }*/
     }
 
     public LatLng getLastKnownLocation() {
@@ -94,5 +94,9 @@ public class LocationProvider {
 
     public String getLastKnownLongitude() {
         return String.valueOf(location.longitude);
+    }
+
+    public void destroy() {
+        locationManager.removeUpdates(locationListener);
     }
 }

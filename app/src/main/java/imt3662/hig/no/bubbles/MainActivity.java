@@ -56,7 +56,11 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+<<<<<<< HEAD
         this.locationProvider = LocationProvider.get(this, null);
+=======
+        this.locationProvider = new LocationProvider(this, null);
+>>>>>>> 4255d4454e70558fae7e9b1065e27805d786e419
         ListView lv = (ListView) findViewById(R.id.listview);
         registerForContextMenu(lv);
 
