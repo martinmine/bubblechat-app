@@ -78,7 +78,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         SharedPreferences prefs = getSharedPreferences(MainActivity.class.getSimpleName(),
                 Context.MODE_PRIVATE);
 
-        this.gcm = new GcmHelper(this, this);
+        this.gcm = GcmHelper.get(this, this);
         this.currentUserID = -1;
         this.gcm.beginRegistering(prefs, getAppVersion(this), new DeviceRegisteredListener() {
             @Override

@@ -6,7 +6,8 @@
     <string name="action_settings">Settings</string>
 
     <string name="title_activity_maps">Map</string>
-    <string name="title_activity_initiator">Splash</string>
+    <string name="title_activity_initiator">BubbleChat</string>
     <string name="initiator_loading_text">Creating your bubble</string>
+    <string name="initiator_loading_location">Tracking location</string>
 
 </resources>

@@ -19,22 +19,34 @@ import imt3662.hig.no.bubbles.MessageSerializing.MessageResponse;
  * Created by Martin on 14/09/26.
  */
 public class GcmHelper {
+
     private static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String RECEIVER_ID = "437017129818";
     private String registrationId;
 
+    private static GcmHelper instance = null;
     private GoogleCloudMessaging gcm;
     private AtomicInteger lastMessageId;
     private MessageErrorListener errorListener;
 
-    public GcmHelper(Context context, MessageErrorListener errorListener) {
+    private GcmHelper() { }
+    private GcmHelper(Context context) {
         this.lastMessageId = new AtomicInteger();
-        this.errorListener = errorListener;
         this.registrationId = "";
         this.gcm = GoogleCloudMessaging.getInstance(context);
     }
+
+    public static GcmHelper get(Context context, MessageErrorListener errorListener) {
+        if (instance == null) {
+            instance = new GcmHelper(context);
+        }
+
+        instance.errorListener = errorListener;
+        return instance;
+    }
+
 
     public void sendMessage(MessageResponse message) {
         Log.i("Sending message", message.getHeader());
