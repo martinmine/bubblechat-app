@@ -234,6 +234,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
 
         EditText editText = (EditText)findViewById(R.id.editText);
         if (editText.getText().length() > 0 && this.currentUserID > 0) {
+            //TODO: GET PREFERENCES FROM SETTING
             ChatMessage newMsg = new ChatMessage(0,String.valueOf(editText.getText()), true, 60.1, 60.1, "Meg");
             gcm.sendMessage(new PostChatMessage(newMsg));
             chatMessages.add(newMsg);

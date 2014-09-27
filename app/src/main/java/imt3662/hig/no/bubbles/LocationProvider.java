@@ -17,7 +17,6 @@ public class LocationProvider {
     private LocationReceiver listener;
 
     public LocationProvider(final Context context, final LocationReceiver listener) {
-
         this.locationManager =  (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         this.listener = listener;
         this.locationListener = new LocationListener() {

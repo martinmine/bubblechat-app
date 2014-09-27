@@ -1,0 +1,21 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:key="@string/preference_key_trackme"
+        android:title="@string/settings_title_trackme"
+        android:summary="@string/settings_summary_trackme"
+        android:defaultValue="true" />
+
+    <EditTextPreference
+        android:key="@string/preference_key_username"
+        android:title="@string/preference_title_username"
+        android:defaultValue="@string/preference_default_username"
+        android:summary="@string/preference_summary_username"
+        android:hint="@string/pref_hint_display_name"
+        android:selectAllOnFocus="true"
+        android:inputType="textCapWords"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:maxLines="1" />
+
+</PreferenceScreen>

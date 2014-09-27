@@ -1,6 +1,8 @@
 package imt3662.hig.no.bubbles;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.preference.PreferenceManager;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -19,6 +21,7 @@ public class ChatMessage {
     private int color;
 
     public ChatMessage(int userID, String msg, boolean hasLocation, double latit, double longi, String username) {
+
         this.userID = userID;
         this.msg = msg;
         this.hasLocation = hasLocation;
@@ -28,7 +31,6 @@ public class ChatMessage {
 
         Color c = new Color();
         color = c.argb(255, new Random().nextInt(255), new Random().nextInt(255), new Random().nextInt(255));
-
     }
 
     public ChatMessage(int userID, String msg, String username) {
