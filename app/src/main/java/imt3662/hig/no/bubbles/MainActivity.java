@@ -318,13 +318,12 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
                 ChatMessage msg = chatMessages.get(longPressedMsgPosition);
 
 
-
                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                 intent.putExtra("TRACED_LATITUDE", msg.getLatitude());
                 intent.putExtra("TRACED_LONGITUDE", msg.getLongitude());
                 intent.putExtra("TRACED_USERNAME", msg.getUsername());
-                intent.putExtra("LATITUDE", "60.0");
-                intent.putExtra("LONGITUDE", "60.0");
+                intent.putExtra("LATITUDE", locationProvider.getLastKnownLatitude());
+                intent.putExtra("LONGITUDE", locationProvider.getLastKnownLongitude());
                 startActivity(intent);
 
 
