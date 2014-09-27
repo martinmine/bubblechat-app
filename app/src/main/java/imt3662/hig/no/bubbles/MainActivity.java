@@ -28,6 +28,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -124,14 +126,25 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
 
     @Override
     public void nodeEntered(int userId) {
+        if (userId != this.currentUserID) {
+            showStatusMessage("Someone joined the chat");
+        }
         Log.i("gcm", "node entered: " + userId);
-        showStatusMessage("Someone joined the chat");
     }
 
     @Override
     public void nodeLeft(int userId) {
+        if (userId == this.currentUserID) {
+            showStatusMessage("You got kicked out from the server, trying to reconnect");
+            currentUserID = 0;
+            LatLng loc = this.locationProvider.getLastKnownLocation();
+            gcm.sendMessage(new ServerStatusRequest(loc.latitude, loc.longitude));
+        }
+        else {
+            showStatusMessage("Someone left the chat");
+        }
+
         Log.i("gcm", "node left: " + userId);
-        showStatusMessage("Someone left the chat");
     }
 
     @Override
