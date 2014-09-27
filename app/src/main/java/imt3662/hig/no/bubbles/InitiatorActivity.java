@@ -31,7 +31,7 @@ public class InitiatorActivity extends Activity implements LocationReceiver, Mes
 
                 try {
                     // Thread will sleep for 10 seconds
-                    sleep(100*2000);
+                    sleep(2000);
 
                     // After 5 seconds redirect to another intent
                     Intent intent = new Intent(getBaseContext(),MainActivity.class);

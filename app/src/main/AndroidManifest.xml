@@ -20,7 +20,7 @@
         android:theme="@android:style/Theme.Holo.Light" >
         <activity
             android:name=".InitiatorActivity"
-            android:label="@string/title_activity_initiator" >
+            android:label="Bubbles" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
