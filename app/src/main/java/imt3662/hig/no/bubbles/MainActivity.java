@@ -41,11 +41,12 @@ import imt3662.hig.no.bubbles.MessageSerializing.PostChatMessage;
 import imt3662.hig.no.bubbles.MessageSerializing.ServerStatusRequest;
 
 
-public class MainActivity extends Activity implements MessageEventHandler, MessageErrorListener, LocationReceiver {
+public class MainActivity extends Activity implements MessageEventHandler, MessageErrorListener {
     private List<ChatMessage> chatMessages;
     private static final float chatMsgRadius = 20.0F; //radius of chat messages
     private GcmHelper gcm;
     private int currentUserID;
+    private int userCount;
     int longPressedMsgPosition = -1;
     private Menu menu;
 
@@ -55,12 +56,18 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.w("as", ChatMessage.USER_MESSAGE + "");
-        this.locationProvider = new LocationProvider(this, this);
+        this.locationProvider = new LocationProvider(this, null);
         ListView lv = (ListView) findViewById(R.id.listview);
         registerForContextMenu(lv);
 
         chatMessages = new ArrayList<ChatMessage>();
+        this.gcm = GcmHelper.get(this, this);
+
+        Intent intent = getIntent();
+
+        this.currentUserID = intent.getIntExtra("user_id", 0);
+        this.userCount = intent.getIntExtra("user_count", 0);
+
 
         //test chat messages
         /*ChatMessage cm = new ChatMessage(1,"Hello world!", true, 60.0, 9.0,"Pels");
@@ -69,43 +76,16 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         chatMessages.add(cm);
         chatMessages.add(cm1);
         chatMessages.add(cm2);*/
-        showStatusMessage("Tracking you down");
+        showStatusMessage("This is a public chat, behave!");
 
         populateListView();
 
-        if (!GcmHelper.checkPlayServices(this)) {
-            // TODO show error message that the user needs to upgrade google play services
-        }
 
-        SharedPreferences prefs = getSharedPreferences(MainActivity.class.getSimpleName(),
-                Context.MODE_PRIVATE);
-
-        this.gcm = GcmHelper.get(this, this);
-        this.currentUserID = -1;
-        this.gcm.beginRegistering(prefs, getAppVersion(this), new DeviceRegisteredListener() {
-            @Override
-            public void registered(String gcmId) {
-                Log.i("gcm", "Registered on gcm with id " + gcmId);
-            }
-        });
 
         MessageDelegater.getInstance().setReceiver(this);
     }
 
-    /**
-     * @return Current application version
-     * Code from google tutorial
-     */
-    private static int getAppVersion(Context context) {
-        try {
-            PackageInfo packageInfo = context.getPackageManager()
-                    .getPackageInfo(context.getPackageName(), 0);
-            return packageInfo.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            // should never happen
-            throw new RuntimeException("Could not get package name: " + e);
-        }
-    }
+
 
     @Override
     public void failedToSend(IOException ex) {
@@ -117,9 +97,6 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     public void messagePosted(ChatMessage message) {
         Log.i("gcm", "posted a message: " + message.getMsg());
         if (message.getUserID() != this.currentUserID) {
-            int color = new Color().argb(255, new Random().nextInt(255),
-                    new Random().nextInt(255), new Random().nextInt(255));
-            message.setColor(color);
             addChatMessage(message);
         }
     }
@@ -155,6 +132,8 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
             showStatusMessage("You are talking to " + userCount + " people");
         }
 
+        this.userCount = userCount;
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -168,18 +147,12 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-
         this.menu = menu;
-        return true;
-    }
 
-    @Override
-    public void locationChanged(Location loc) {
-        if (currentUserID == -1 && gcm != null && !gcm.getRegistrationId().isEmpty()) {
-            showStatusMessage("Found you! Hang on while we're snitching on you");
-            currentUserID = 0;
-            gcm.sendMessage(new ServerStatusRequest(loc.getLatitude(), loc.getLongitude()));
-        }
+        MenuItem numberOfUsers = menu.findItem(R.id.number_users);
+        numberOfUsers.setTitle(String.valueOf(userCount));
+
+        return true;
     }
 
     @Override

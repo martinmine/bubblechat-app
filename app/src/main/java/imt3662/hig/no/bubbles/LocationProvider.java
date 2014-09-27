@@ -2,7 +2,6 @@ package imt3662.hig.no.bubbles;
 
 import android.content.Context;
 import android.location.Criteria;
-import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -10,7 +9,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.internal.c;
 import com.google.android.gms.maps.model.LatLng;
 
 public class LocationProvider {
@@ -27,14 +25,11 @@ public class LocationProvider {
 
             @Override
             public void onLocationChanged(Location loc) {
-                double latitude;
-                double longitude;
                 Log.i("Location provider", "Got location: " + loc.getLatitude() + "," + loc.getLongitude());
+                location = new LatLng(loc.getLatitude(), loc.getLongitude());
 
-                latitude = loc.getLatitude();
-                longitude = loc.getLongitude();
-                location = new LatLng(latitude, longitude);
-                listener.locationChanged(loc);
+                if (listener != null)
+                    listener.locationChanged(loc);
             }
 
             @Override
@@ -51,6 +46,9 @@ public class LocationProvider {
             }
         };
 
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        /*
+        Joakim should feel free to fix this tomorrow
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
         criteria.setAltitudeRequired(false);
@@ -75,7 +73,7 @@ public class LocationProvider {
 
                 Log.i("PROVIDER", "GPS IS SET");
             }
-        }
+        }*/
     }
 
     public LatLng getLastKnownLocation() {
@@ -88,5 +86,9 @@ public class LocationProvider {
 
     public String getLastKnownLongitude() {
         return String.valueOf(location.longitude);
+    }
+
+    public void destroy() {
+        locationManager.removeUpdates(locationListener);
     }
 }
