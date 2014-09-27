@@ -47,6 +47,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     private GcmHelper gcm;
     private int currentUserID;
     int longPressedMsgPosition = -1;
+    private Menu menu;
 
     private LocationProvider locationProvider;
 
@@ -148,7 +149,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     }
 
     @Override
-    public void gotServerInfo(int userCount, int userId) {
+    public void gotServerInfo(final int userCount, int userId) {
         Log.i("gcm", "Got server info count: " + userCount + ", your user ID: " + userId);
         if (this.currentUserID == 0) {
             this.currentUserID = userId;
@@ -156,12 +157,25 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         }
 
         // TODO update user count thingy
+        //Done!
+        //updates menubar to show number of users
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                MenuItem numberOfUsers = menu.findItem(R.id.number_users);
+                numberOfUsers.setTitle(String.valueOf(userCount));
+
+            }
+        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+        this.menu = menu;
         return true;
     }
 
@@ -351,4 +365,6 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
 
         handler.post(action);
     }
+
+
 }
