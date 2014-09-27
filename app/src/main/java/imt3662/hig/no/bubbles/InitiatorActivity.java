@@ -1,5 +1,6 @@
 package imt3662.hig.no.bubbles;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -33,6 +34,9 @@ public class InitiatorActivity extends Activity implements LocationReceiver, Mes
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initiator);
+
+        this.getActionBar().hide();
+
         if (!GcmHelper.checkPlayServices(this)) {
             // TODO show error message that the user needs to upgrade google play services
             return;
@@ -95,8 +99,6 @@ public class InitiatorActivity extends Activity implements LocationReceiver, Mes
 
     @Override
     public void gotServerInfo(int userCount, int userId) {
-        return;
-        /*
         // go to main activity
         setLoadingText("Done!");
         MessageDelegater.getInstance().setReceiver(null);
@@ -105,7 +107,7 @@ public class InitiatorActivity extends Activity implements LocationReceiver, Mes
         intent.putExtra("user_id", userId);
         this.locationProvider.destroy();
         startActivity(intent);
-        finish();*/
+        finish();
     }
 
     private void makeContact(LatLng loc) {
