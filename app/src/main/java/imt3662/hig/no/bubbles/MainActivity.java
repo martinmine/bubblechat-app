@@ -28,6 +28,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +47,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     private GcmHelper gcm;
     private int currentUserID;
     int longPressedMsgPosition = -1;
+    private Menu menu;
 
     private LocationProvider locationProvider;
 
@@ -124,18 +127,29 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
 
     @Override
     public void nodeEntered(int userId) {
+        if (userId != this.currentUserID) {
+            showStatusMessage("Someone joined the chat");
+        }
         Log.i("gcm", "node entered: " + userId);
-        showStatusMessage("Someone joined the chat");
     }
 
     @Override
     public void nodeLeft(int userId) {
+        if (userId == this.currentUserID) {
+            showStatusMessage("You got kicked out from the server, trying to reconnect");
+            currentUserID = 0;
+            LatLng loc = this.locationProvider.getLastKnownLocation();
+            gcm.sendMessage(new ServerStatusRequest(loc.latitude, loc.longitude));
+        }
+        else {
+            showStatusMessage("Someone left the chat");
+        }
+
         Log.i("gcm", "node left: " + userId);
-        showStatusMessage("Someone left the chat");
     }
 
     @Override
-    public void gotServerInfo(int userCount, int userId) {
+    public void gotServerInfo(final int userCount, int userId) {
         Log.i("gcm", "Got server info count: " + userCount + ", your user ID: " + userId);
         if (this.currentUserID == 0) {
             this.currentUserID = userId;
@@ -143,12 +157,25 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         }
 
         // TODO update user count thingy
+        //Done!
+        //updates menubar to show number of users
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                MenuItem numberOfUsers = menu.findItem(R.id.number_users);
+                numberOfUsers.setTitle(String.valueOf(userCount));
+
+            }
+        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+        this.menu = menu;
         return true;
     }
 
@@ -305,13 +332,12 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
                 ChatMessage msg = chatMessages.get(longPressedMsgPosition);
 
 
-
                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                 intent.putExtra("TRACED_LATITUDE", msg.getLatitude());
                 intent.putExtra("TRACED_LONGITUDE", msg.getLongitude());
                 intent.putExtra("TRACED_USERNAME", msg.getUsername());
-                intent.putExtra("LATITUDE", "60.0");
-                intent.putExtra("LONGITUDE", "60.0");
+                intent.putExtra("LATITUDE", locationProvider.getLastKnownLatitude());
+                intent.putExtra("LONGITUDE", locationProvider.getLastKnownLongitude());
                 startActivity(intent);
 
 
@@ -339,4 +365,6 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
 
         handler.post(action);
     }
+
+
 }

@@ -16,6 +16,8 @@
             android:layout_height="fill_parent"
             android:id="@+id/progressBar"
             android:layout_gravity="center_horizontal"
+            android:background="@drawable/loadscreenbg"
+
             android:layout_weight="0.72"
             android:indeterminate="false"
             android:clickable="false" />
