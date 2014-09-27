@@ -1,8 +1,11 @@
 package imt3662.hig.no.bubbles.MessageHandling;
 
+import android.location.Location;
 import android.os.Bundle;
 
-import java.util.Map;
+import com.google.android.gms.maps.model.LatLng;
+
+import imt3662.hig.no.bubbles.ChatMessage;
 
 /**
  * Created by Martin on 14/09/25.
@@ -17,7 +20,9 @@ public class ChatMessageEvent implements MessageEventParser {
         double longitude = Double.valueOf(message.getString("longitude"));
         String username = message.getString("username");
 
-        handler.messagePosted(userID, messageText, hasLocation, latitude, longitude, username);
+        ChatMessage chatMessage = new ChatMessage(userID, messageText, hasLocation,
+                new LatLng(latitude, longitude), username, 0);
+        handler.messagePosted(chatMessage);
     }
 
     @Override

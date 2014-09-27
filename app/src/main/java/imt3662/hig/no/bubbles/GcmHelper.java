@@ -32,6 +32,7 @@ public class GcmHelper {
     public GcmHelper(Context context, MessageErrorListener errorListener) {
         this.lastMessageId = new AtomicInteger();
         this.errorListener = errorListener;
+        this.registrationId = "";
         this.gcm = GoogleCloudMessaging.getInstance(context);
     }
 
@@ -63,8 +64,8 @@ public class GcmHelper {
         int appVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
 
         if (registrationId.isEmpty() || appVersion != currentAppVersion) {
-
-            // Clear the registration Id, as we dont have app version in our async task
+            // Clear gcm reg-id and save the app version, as we
+            // don't have the app version in the async task worker
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString(PROPERTY_REG_ID, "");
             editor.putInt(PROPERTY_APP_VERSION, appVersion);

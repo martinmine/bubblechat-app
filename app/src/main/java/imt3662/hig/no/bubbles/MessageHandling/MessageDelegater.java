@@ -3,8 +3,6 @@ package imt3662.hig.no.bubbles.MessageHandling;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.google.android.gms.wearable.MessageEvent;
-
 import java.util.HashMap;
 import java.util.Map;
 

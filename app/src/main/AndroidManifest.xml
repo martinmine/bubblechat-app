@@ -61,7 +61,6 @@
 
         <service android:name=".GcmIntentService" />
 
-
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

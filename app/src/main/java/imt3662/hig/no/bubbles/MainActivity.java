@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -29,6 +31,7 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import imt3662.hig.no.bubbles.MessageHandling.MessageDelegater;
 import imt3662.hig.no.bubbles.MessageHandling.MessageEventHandler;
@@ -57,12 +60,13 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         chatMessages = new ArrayList<ChatMessage>();
 
         //test chat messages
-        ChatMessage cm = new ChatMessage(1,"Hello world!", true, 60.0, 9.0,"Pels");
+        /*ChatMessage cm = new ChatMessage(1,"Hello world!", true, 60.0, 9.0,"Pels");
         ChatMessage cm1 = new ChatMessage(1,"Hello world!2", true, 60.0, 60.0,"Anon");
         ChatMessage cm2 = new ChatMessage(1,"Hello world!3",true, 60.0, 60.0 ,"Anon");
         chatMessages.add(cm);
         chatMessages.add(cm1);
-        chatMessages.add(cm2);
+        chatMessages.add(cm2);*/
+        showStatusMessage("Tracking you down");
 
 
         populateListView();
@@ -104,29 +108,40 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     @Override
     public void failedToSend(IOException ex) {
         Log.w("gcm", "Failed to send message: " + ex.getMessage());
+        showStatusMessage("Unable to send message");
     }
 
     @Override
-    public void messagePosted(int userId, String message, boolean hasLocation, double lat, double lng, String username) {
-        Log.i("gcm", "posted a message: " + message);
+    public void messagePosted(ChatMessage message) {
+        Log.i("gcm", "posted a message: " + message.getMsg());
+        if (message.getUserID() != this.currentUserID) {
+            int color = new Color().argb(255, new Random().nextInt(255),
+                    new Random().nextInt(255), new Random().nextInt(255));
+            message.setColor(color);
+            addChatMessage(message);
+        }
     }
 
     @Override
     public void nodeEntered(int userId) {
         Log.i("gcm", "node entered: " + userId);
-        // TODO add message bubble
+        showStatusMessage("Someone joined the chat");
     }
 
     @Override
     public void nodeLeft(int userId) {
         Log.i("gcm", "node left: " + userId);
-        // TODO add message bubble
+        showStatusMessage("Someone left the chat");
     }
 
     @Override
     public void gotServerInfo(int userCount, int userId) {
         Log.i("gcm", "Got server info count: " + userCount + ", your user ID: " + userId);
-        this.currentUserID = userId;
+        if (this.currentUserID == 0) {
+            this.currentUserID = userId;
+            showStatusMessage("You are talking to " + userCount + " people");
+        }
+
         // TODO update user count thingy
     }
 
@@ -139,7 +154,8 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
 
     @Override
     public void locationChanged(Location loc) {
-        if (currentUserID == -1 && !gcm.getRegistrationId().isEmpty()) {
+        if (currentUserID == -1 && gcm != null && !gcm.getRegistrationId().isEmpty()) {
+            showStatusMessage("Found you! Hang on while we're snitching on you");
             currentUserID = 0;
             gcm.sendMessage(new ServerStatusRequest(loc.getLatitude(), loc.getLongitude()));
         }
@@ -192,10 +208,12 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
             shapeDrawable.getPaint().setColor(currentMessage.getColor());
             rv.setBackground(shapeDrawable);
 
-            if(currentMessage.getUsername() != null){
-                msgText.setText(currentMessage.getUsername() + ": ");
+            if(currentMessage.getUsername() != null && !currentMessage.getUsername().isEmpty()){
+                msgText.setText(currentMessage.getUsername() + ": " + currentMessage.getMsg());
             }
-            msgText.append(currentMessage.getMsg());
+            else {
+                msgText.setText(currentMessage.getMsg());
+            }
 
             /*
             convertView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -231,13 +249,17 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
 
     //used for testing the chat locally (AND NOW TOWARDS THE SERVER!)
     public void newMessage(View view) {
-
         EditText editText = (EditText)findViewById(R.id.editText);
         if (editText.getText().length() > 0 && this.currentUserID > 0) {
-            //TODO: GET PREFERENCES FROM SETTING
-            ChatMessage newMsg = new ChatMessage(0,String.valueOf(editText.getText()), true, 60.1, 60.1, "Meg");
+
+            ChatMessage newMsg = new ChatMessage(this.currentUserID,
+                    String.valueOf(editText.getText()), true,
+                    locationProvider.getLastKnownLocation(),
+                    "", ChatMessage.USER_MESSAGE);
+
+
             gcm.sendMessage(new PostChatMessage(newMsg));
-            chatMessages.add(newMsg);
+            addChatMessage(newMsg);
             editText.setText("");
 
             InputMethodManager imm = (InputMethodManager) getSystemService(
@@ -245,7 +267,11 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
             imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
             //populateListView();
         }
+    }
 
+    private void showStatusMessage(String message) {
+        ChatMessage statusMessage = new ChatMessage(message, ChatMessage.SYSTEM_MESSAGE);
+        addChatMessage(statusMessage);
     }
 
     //this is here just because.
@@ -297,8 +323,20 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
             default:
                 return super.onContextItemSelected(item);
         }
+    }
 
+    private void addChatMessage(final ChatMessage message) {
+        Handler handler = new Handler(this.getMainLooper());
+        Runnable action = new Runnable() {
+            @Override
+            public void run() {
+                chatMessages.add(message);
+                ListView listView = (ListView) findViewById(R.id.listview);
+                ChatListAdapter adapter = (ChatListAdapter) listView.getAdapter();
+                adapter.notifyDataSetChanged();
+            }
+        };
 
-
+        handler.post(action);
     }
 }

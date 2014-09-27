@@ -2,8 +2,6 @@ package imt3662.hig.no.bubbles.MessageHandling;
 
 import android.os.Bundle;
 
-import java.util.Map;
-
 /**
  * Created by Martin on 14/09/25.
  */
