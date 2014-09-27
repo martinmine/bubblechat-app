@@ -3,13 +3,8 @@ package imt3662.hig.no.bubbles;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -33,8 +28,6 @@ import com.google.android.gms.maps.model.LatLng;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
 import imt3662.hig.no.bubbles.MessageHandling.MessageDelegater;
 import imt3662.hig.no.bubbles.MessageHandling.MessageEventHandler;
 import imt3662.hig.no.bubbles.MessageSerializing.PostChatMessage;
@@ -56,7 +49,9 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        this.locationProvider = new LocationProvider(this, null);
+
+        this.locationProvider = LocationProvider.get(this, null);
+
         ListView lv = (ListView) findViewById(R.id.listview);
         registerForContextMenu(lv);
 
@@ -208,12 +203,12 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
             else {
                 msgText.setText(currentMessage.getMsg());
             }
-
+ 
             /*
             convertView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-
+ 
                     Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                     intent.putExtra("TRACED_LATITUDE", currentMessage.getLatitude());
                     intent.putExtra("TRACED_LONGITUDE", currentMessage.getLongitude());
@@ -221,7 +216,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
                     intent.putExtra("LATITUDE", "60.0");
                     intent.putExtra("LONGITUDE", "60.0");
                     startActivity(intent);
-
+ 
                     return true;
                 }
             });*/
@@ -332,6 +327,4 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
 
         handler.post(action);
     }
-
-
 }

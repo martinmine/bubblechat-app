@@ -13,12 +13,20 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class LocationProvider {
 
+    private static LocationProvider instance = null;
     private LocationManager locationManager;
     private LocationListener locationListener;
     private LatLng location;
     private LocationReceiver listener;
 
-    public LocationProvider(final Context context, final LocationReceiver listener) {
+    public static LocationProvider get(Context context, LocationReceiver listener) {
+        if (instance == null) {
+            instance = new LocationProvider(context, listener);
+        }
+        return instance;
+    }
+    private LocationProvider() {}
+    private LocationProvider(final Context context, final LocationReceiver listener) {
         this.locationManager =  (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         this.listener = listener;
         this.locationListener = new LocationListener() {

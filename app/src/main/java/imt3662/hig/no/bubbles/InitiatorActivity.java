@@ -11,13 +11,11 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.ListView;
-import android.widget.TextView;
 
-import com.google.android.gms.games.Notifications;
+import android.widget.TextView;
 import com.google.android.gms.maps.model.LatLng;
+
+
 
 import java.io.IOException;
 
@@ -49,7 +47,7 @@ public class InitiatorActivity extends Activity implements LocationReceiver, Mes
 
         MessageDelegater.getInstance().setReceiver(this);
         this.gcm.beginRegistering(prefs, getAppVersion(this), this);
-        this.locationProvider = new LocationProvider(this, this);
+        this.locationProvider = LocationProvider.get(this,this);
     }
 
     /**
@@ -100,6 +98,7 @@ public class InitiatorActivity extends Activity implements LocationReceiver, Mes
     @Override
     public void gotServerInfo(int userCount, int userId) {
         // go to main activity
+
         setLoadingText("Done!");
         MessageDelegater.getInstance().setReceiver(null);
         Intent intent = new Intent(getBaseContext(), MainActivity.class);
@@ -143,5 +142,4 @@ public class InitiatorActivity extends Activity implements LocationReceiver, Mes
             setLoadingText("Waiting for GPS");
         }
     }
-
 }
