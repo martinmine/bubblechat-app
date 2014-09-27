@@ -55,7 +55,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Log.w("as", ChatMessage.USER_MESSAGE + "");
         this.locationProvider = new LocationProvider(this, this);
         ListView lv = (ListView) findViewById(R.id.listview);
         registerForContextMenu(lv);
@@ -70,7 +70,6 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         chatMessages.add(cm1);
         chatMessages.add(cm2);*/
         showStatusMessage("Tracking you down");
-
 
         populateListView();
 
@@ -149,23 +148,18 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     }
 
     @Override
-    public void gotServerInfo(final int userCount, int userId) {
+    public void gotServerInfo(final int userCount, final int userId) {
         Log.i("gcm", "Got server info count: " + userCount + ", your user ID: " + userId);
         if (this.currentUserID == 0) {
             this.currentUserID = userId;
             showStatusMessage("You are talking to " + userCount + " people");
         }
 
-        // TODO update user count thingy
-        //Done!
-        //updates menubar to show number of users
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-
                 MenuItem numberOfUsers = menu.findItem(R.id.number_users);
                 numberOfUsers.setTitle(String.valueOf(userCount));
-
             }
         });
     }

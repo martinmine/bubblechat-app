@@ -28,7 +28,6 @@ public class InitiatorActivity extends Activity implements LocationReceiver, Mes
 
         Thread background = new Thread() {
             public void run() {
-
                 try {
                     // Thread will sleep for 10 seconds
                     sleep(2000);
