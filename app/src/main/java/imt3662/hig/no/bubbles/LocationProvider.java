@@ -2,7 +2,6 @@ package imt3662.hig.no.bubbles;
 
 import android.content.Context;
 import android.location.Criteria;
-import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -10,17 +9,24 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.internal.c;
 import com.google.android.gms.maps.model.LatLng;
 
 public class LocationProvider {
 
+    private static LocationProvider instance = null;
     private LocationManager locationManager;
     private LocationListener locationListener;
     private LatLng location;
     private LocationReceiver listener;
 
-    public LocationProvider(final Context context, final LocationReceiver listener) {
+    public static LocationProvider get(Context context, LocationReceiver listener) {
+        if (instance == null) {
+            instance = new LocationProvider(context, listener);
+        }
+        return instance;
+    }
+    private LocationProvider() {}
+    private LocationProvider(final Context context, final LocationReceiver listener) {
         this.locationManager =  (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         this.listener = listener;
         this.locationListener = new LocationListener() {
