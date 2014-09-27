@@ -3,13 +3,8 @@ package imt3662.hig.no.bubbles;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -33,8 +28,6 @@ import com.google.android.gms.maps.model.LatLng;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
 import imt3662.hig.no.bubbles.MessageHandling.MessageDelegater;
 import imt3662.hig.no.bubbles.MessageHandling.MessageEventHandler;
 import imt3662.hig.no.bubbles.MessageSerializing.PostChatMessage;
@@ -56,11 +49,9 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-<<<<<<< HEAD
+
         this.locationProvider = LocationProvider.get(this, null);
-=======
-        this.locationProvider = new LocationProvider(this, null);
->>>>>>> 4255d4454e70558fae7e9b1065e27805d786e419
+
         ListView lv = (ListView) findViewById(R.id.listview);
         registerForContextMenu(lv);
 
@@ -336,6 +327,4 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
 
         handler.post(action);
     }
-
-
 }
