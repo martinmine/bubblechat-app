@@ -107,8 +107,8 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     }
 
     @Override
-    public void messagePosted(int userId, String message, boolean hasLocation, double lat, double lng, String username) {
-        Log.i("gcm", "posted a message: " + message);
+    public void messagePosted(ChatMessage message) {
+        Log.i("gcm", "posted a message: " + message.getMsg());
     }
 
     @Override
@@ -139,7 +139,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
 
     @Override
     public void locationChanged(Location loc) {
-        if (currentUserID == -1 && !gcm.getRegistrationId().isEmpty()) {
+        if (currentUserID == -1 && gcm != null && !gcm.getRegistrationId().isEmpty()) {
             currentUserID = 0;
             gcm.sendMessage(new ServerStatusRequest(loc.getLatitude(), loc.getLongitude()));
         }
