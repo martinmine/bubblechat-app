@@ -192,7 +192,7 @@ public class GcmHelper {
                 public void run() {
                     handler.post(new Runnable() {
                         public void run() {
-                            Log.w("Pinger", "PING!");
+                            Log.i("Pinger", "PING!");
                             LocationProvider provider = LocationProvider.get(null, null);
                             sendMessage(new ServerStatusRequest(provider.getLastKnownLocation().latitude,
                                     provider.getLastKnownLocation().longitude));
