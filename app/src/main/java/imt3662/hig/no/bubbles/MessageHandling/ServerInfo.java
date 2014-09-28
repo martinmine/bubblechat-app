@@ -3,6 +3,10 @@ package imt3662.hig.no.bubbles.MessageHandling;
 import android.os.Bundle;
 
 /**
+ * This message is used for authentication and for updating amount
+ * of users/nodes are within the users reach. This message is a response
+ * to the ServerStatusRequest and has to be sent at least one time
+ * within 2x the server ping cycle-timeout period.
  * Created by Martin on 14/09/25.
  */
 public class ServerInfo implements MessageEventParser {
