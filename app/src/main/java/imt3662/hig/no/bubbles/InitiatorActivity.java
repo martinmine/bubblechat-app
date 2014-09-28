@@ -1,6 +1,6 @@
 package imt3662.hig.no.bubbles;
 
-import android.app.ActionBar;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;

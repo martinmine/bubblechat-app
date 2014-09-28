@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bubbles</string>
+    <string name="action_settings">Innstillinger</string>
+
+    <string name="title_activity_maps">Kart</string>
+    <string name="title_activity_initiator">BubbleChat</string>
+    <string name="initiator_loading_text">Lager din boble</string>
+    <string name="initiator_loading_location">Henter lokasjon</string>
+</resources>
