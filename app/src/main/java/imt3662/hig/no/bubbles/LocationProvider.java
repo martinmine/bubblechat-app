@@ -26,14 +26,14 @@ public class LocationProvider {
      * @param listener Who shall receive location updates
      * @return The LocationProvider instance
      */
-    public static LocationProvider get(Context context, LocationReceiver listener) {
+    public static LocationProvider get(Context context, LocationReceiver listener) throws Exception {
         if (instance == null) {
             instance = new LocationProvider(context, listener);
         }
         return instance;
     }
     private LocationProvider() {}
-    private LocationProvider(final Context context, final LocationReceiver listener) {
+    private LocationProvider(final Context context, final LocationReceiver listener) throws Exception {
         this.locationManager =  (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         this.listener = listener;
         this.locationListener = new LocationListener() {
@@ -45,6 +45,10 @@ public class LocationProvider {
 
                 if (listener != null)
                     listener.locationChanged(loc);
+
+                if (loc.getAccuracy() < 50.0f) {
+                    locationManager.removeUpdates(this);
+                }
             }
 
             @Override
@@ -61,35 +65,22 @@ public class LocationProvider {
             }
         };
 
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-        /*
-        Joakim should feel free to fix this tomorrow
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        criteria.setAltitudeRequired(false);
-        criteria.setBearingRequired(false);
-        criteria.setCostAllowed(true);
 
         if (locationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER) &&
                                             locationManager.isProviderEnabled("network")) {
-            if (locationManager.getBestProvider(criteria, true).equals("network")) {
-                                                                                      // Minimum update time
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1 * 30 * 1000, 0, locationListener);
-
-                Log.i("PROVIDER", "NETWORK IS SET");
-            }
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, 0, locationListener);
+            Log.i("PROVIDER", "NETWORK IS SET");
         }
-
-        if (locationManager.getAllProviders().contains(LocationManager.GPS_PROVIDER) &&
-                                            locationManager.isProviderEnabled("gps")) {
-            if (locationManager.getBestProvider(criteria, true).equals("gps")) {
-                                                                                    // Minimum update time
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1 * 30 * 1000, 0, locationListener);
-
-                Log.i("PROVIDER", "GPS IS SET");
-            }
-        }*/
+        else if (locationManager.getAllProviders().contains(LocationManager.GPS_PROVIDER) &&
+                                                 locationManager.isProviderEnabled("gps")) {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 0, locationListener);
+            Log.i("PROVIDER", "GPS IS SET");
+        }
+        else {
+            throw new Exception("No provider available");
+        }
     }
+
 
     /**
      * Gets the last known location of the user, may be null if nothing has been found.

@@ -65,23 +65,6 @@ class ChatListAdapter extends ArrayAdapter<ChatMessage> {
             msgText.setText(currentMessage.getMsg());
         }
 
-            /*
-            convertView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-
-                    Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-                    intent.putExtra("TRACED_LATITUDE", currentMessage.getLatitude());
-                    intent.putExtra("TRACED_LONGITUDE", currentMessage.getLongitude());
-                    intent.putExtra("TRACED_USERNAME", currentMessage.getUsername());
-                    intent.putExtra("LATITUDE", "60.0");
-                    intent.putExtra("LONGITUDE", "60.0");
-                    startActivity(intent);
-
-                    return true;
-                }
-            });*/
-
         return convertView;
     }
 }

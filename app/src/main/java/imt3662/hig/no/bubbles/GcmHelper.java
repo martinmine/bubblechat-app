@@ -193,9 +193,14 @@ public class GcmHelper {
                     handler.post(new Runnable() {
                         public void run() {
                             Log.i("Pinger", "PING!");
-                            LocationProvider provider = LocationProvider.get(null, null);
-                            sendMessage(new ServerStatusRequest(provider.getLastKnownLocation().latitude,
-                                    provider.getLastKnownLocation().longitude));
+                            try {
+                                LocationProvider provider = LocationProvider.get(null, null);
+                                sendMessage(new ServerStatusRequest(provider.getLastKnownLocation().latitude,
+                                        provider.getLastKnownLocation().longitude));
+                            }
+                            catch (Exception e){
+                                Log.w("PROVIDER", "FAILED: " + e.getMessage());
+                            }
                         }
                     });
                 }

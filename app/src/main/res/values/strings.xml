@@ -11,5 +11,18 @@
     <string name="initiator_loading_location">Tracking location</string>
     <string name="initiator_loading_pending_device_registration">Making soap water</string>
     <string name="initiator_loading_done">Done</string>
+    <string name="initiator_loading_unable_to_get_provider">You need a network connection to enter a bubble</string>
+
+    <string name="chatmessage_welcome">Welcome! This is a public bubble, behave :)</string>
+    <string name="chatmessage_unable_to_send">Unable to send message</string>
+    <string name="chatmessage_someone_joined">Someone joined your bubble </string>
+    <string name="chatmessage_kicked_reconnect">Your bubble burst! Trying to reconnect</string>
+    <string name="chatmessage_someone_left">Someone left your bubble</string>
+    <string name="chatmessage_reconnect">You have been reconnected</string>
+
+
+
+
+
 
 </resources>

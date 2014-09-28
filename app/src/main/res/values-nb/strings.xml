@@ -9,4 +9,13 @@
     <string name="initiator_loading_location">Henter lokasjon</string>
     <string name="initiator_loading_pending_device_registration">Lager såpevann</string>
     <string name="initiator_loading_done">Ferdig!</string>
+    <string name="initiator_loading_unable_to_get_provider">Du må være pålogget et nettverk for å finne din boble</string>
+
+    <string name="chatmessage_welcome">Velkommen til din boble, oppfør deg pent :)</string>
+    <string name="chatmessage_unable_to_send">Kunne ikke sende meldingen</string>
+    <string name="chatmessage_someone_joined">Noen kom inn i din boble</string>
+    <string name="chatmessage_kicked_reconnect">Bobla sprakk, prøver å gjenopprette</string>
+    <string name="chatmessage_someone_left">Noen har forlatt bobla</string>
+    <string name="chatmessage_reconnect">Du er tilbake i bobla</string>
+
 </resources>

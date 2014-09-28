@@ -48,7 +48,12 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.locationProvider = LocationProvider.get(this, null);
+        try {
+            this.locationProvider = LocationProvider.get(this, null);
+        }
+        catch(Exception e) {
+            Log.w("PROVIDER", "FAILED TO GET PROVIDER: " + e.getMessage());
+        }
 
         ListView lv = (ListView) findViewById(R.id.listview);
         registerForContextMenu(lv);
@@ -61,7 +66,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         this.currentUserID = intent.getIntExtra("user_id", 0);
         this.userCount = intent.getIntExtra("user_count", 0);
 
-        showStatusMessage("This is a public chat, behave!");
+        showStatusMessage(R.string.chatmessage_welcome);
 
         populateListView();
 
@@ -76,7 +81,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     @Override
     public void failedToSend(IOException ex) {
         Log.w("gcm", "Failed to send message: " + ex.getMessage());
-        showStatusMessage("Unable to send message");
+        showStatusMessage(R.string.chatmessage_unable_to_send);
     }
 
     /**
@@ -98,7 +103,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     @Override
     public void nodeEntered(int userId) {
         if (userId != this.currentUserID && this.currentUserID > 0) {
-            showStatusMessage("Someone joined the chat");
+            showStatusMessage(R.string.chatmessage_someone_joined);
         }
         Log.i("gcm", "node entered: " + userId);
     }
@@ -111,13 +116,13 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     @Override
     public void nodeLeft(int userId) {
         if (userId == this.currentUserID) {
-            showStatusMessage("You got kicked out from the server, trying to reconnect");
+            showStatusMessage(R.string.chatmessage_kicked_reconnect);
             currentUserID = 0;
             LatLng loc = this.locationProvider.getLastKnownLocation();
             gcm.sendMessage(new ServerStatusRequest(loc.latitude, loc.longitude));
         }
         else {
-            showStatusMessage("Someone left the chat");
+            showStatusMessage(R.string.chatmessage_someone_left);
         }
 
         Log.i("gcm", "node left: " + userId);
@@ -133,7 +138,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         Log.i("gcm", "Got server info count: " + userCount + ", your user ID: " + userId);
         if (this.currentUserID == 0) {
             this.currentUserID = userId;
-            showStatusMessage("Reconnected, you are talking to " + userCount + " people");
+            showStatusMessage(R.string.chatmessage_reconnect);
         }
 
         this.userCount = userCount;
@@ -208,16 +213,9 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         }
     }
 
-    private void showStatusMessage(String message) {
-        ChatMessage statusMessage = new ChatMessage(message, ChatMessage.SYSTEM_MESSAGE);
+    private void showStatusMessage(int message) {
+        ChatMessage statusMessage = new ChatMessage(getString(message), ChatMessage.SYSTEM_MESSAGE);
         addChatMessage(statusMessage);
-    }
-
-    // TODO remove this?
-    public void toast(View view) {
-        Toast.makeText(getApplicationContext(), "Valg",
-                Toast.LENGTH_SHORT).show();
-
     }
 
     @Override
@@ -246,8 +244,6 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
                 intent.putExtra("LATITUDE", locationProvider.getLastKnownLatitude());
                 intent.putExtra("LONGITUDE", locationProvider.getLastKnownLongitude());
                 startActivity(intent);
-
-
 
                 return true;
             case R.id.ignore:

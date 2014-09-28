@@ -47,7 +47,14 @@ public class InitiatorActivity extends Activity implements LocationReceiver,
 
         MessageDelegater.getInstance().setReceiver(this);
         this.gcm.beginRegistering(prefs, getAppVersion(this), this);
-        this.locationProvider = LocationProvider.get(this,this);
+        try {
+            this.locationProvider = LocationProvider.get(this, this);
+        }
+        catch (Exception e) {
+            Log.w("PROVIDER","UNABLE TO GET PROVIDER:   " + e.getMessage());
+            TextView loadingMessage = (TextView) findViewById(R.id.loadText);
+            loadingMessage.setText(R.string.initiator_loading_unable_to_get_provider);
+        }
     }
 
     /**
