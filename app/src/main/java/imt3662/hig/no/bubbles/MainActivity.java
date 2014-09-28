@@ -24,6 +24,9 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
 import imt3662.hig.no.bubbles.MessageHandling.MessageDelegater;
 import imt3662.hig.no.bubbles.MessageHandling.MessageEventHandler;
 import imt3662.hig.no.bubbles.MessageSerializing.DestroyNode;
@@ -34,6 +37,7 @@ import imt3662.hig.no.bubbles.MessageSerializing.ServerStatusRequest;
  * Main activity of the application.
  */
 public class MainActivity extends Activity implements MessageEventHandler, MessageErrorListener {
+    private static List<Integer> ignoredUsers = new LinkedList<Integer>();
 
     private GcmHelper gcm;
     private int currentUserID;
@@ -86,7 +90,8 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     @Override
     public void messagePosted(ChatMessage message) {
         Log.i("gcm", "posted a message: " + message.getMsg());
-        if (message.getUserID() != this.currentUserID) {
+        if (message.getUserID() != this.currentUserID
+                && !ignoredUsers.contains(message.getUserID())) {
             addChatMessage(message);
         }
     }
@@ -131,7 +136,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     @Override
     public void gotServerInfo(final int userCount, final int userId) {
         Log.i("gcm", "Got server info count: " + userCount + ", your user ID: " + userId);
-        if (this.currentUserID == 0) {
+        if (this.currentUserID != userId) {
             this.currentUserID = userId;
             showStatusMessage("Reconnected, you are talking to " + userCount + " people");
         }
@@ -235,11 +240,12 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        ChatMessage msg = ChatListAdapter.getChatMessage(longPressedMsgPosition);
+
         switch (item.getItemId()) {
             case R.id.findOnMap:
-                ChatMessage msg = ChatListAdapter.getChatMessage(longPressedMsgPosition);
-
                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+
                 intent.putExtra("TRACED_LATITUDE", msg.getLatitude());
                 intent.putExtra("TRACED_LONGITUDE", msg.getLongitude());
                 intent.putExtra("TRACED_USERNAME", msg.getUsername());
@@ -247,10 +253,9 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
                 intent.putExtra("LONGITUDE", locationProvider.getLastKnownLongitude());
                 startActivity(intent);
 
-
-
                 return true;
             case R.id.ignore:
+                ignoredUsers.add(msg.getUserID());
 
                 return true;
             default:
