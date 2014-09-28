@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import imt3662.hig.no.bubbles.MessageHandling.MessageDelegater;
 import imt3662.hig.no.bubbles.MessageHandling.MessageEventHandler;
+import imt3662.hig.no.bubbles.MessageSerializing.DestroyNode;
 import imt3662.hig.no.bubbles.MessageSerializing.PostChatMessage;
 import imt3662.hig.no.bubbles.MessageSerializing.ServerStatusRequest;
 
@@ -57,6 +58,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
 
         chatMessages = new ArrayList<ChatMessage>();
         this.gcm = GcmHelper.get(this, this);
+        this.gcm.startPinging();
 
         Intent intent = getIntent();
 
@@ -98,7 +100,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
 
     @Override
     public void nodeEntered(int userId) {
-        if (userId != this.currentUserID) {
+        if (userId != this.currentUserID && this.currentUserID > 0) {
             showStatusMessage("Someone joined the chat");
         }
         Log.i("gcm", "node entered: " + userId);
@@ -124,7 +126,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         Log.i("gcm", "Got server info count: " + userCount + ", your user ID: " + userId);
         if (this.currentUserID == 0) {
             this.currentUserID = userId;
-            showStatusMessage("You are talking to " + userCount + " people");
+            showStatusMessage("Reconnected, you are talking to " + userCount + " people");
         }
 
         this.userCount = userCount;
@@ -311,6 +313,11 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
             default:
                 return super.onContextItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        gcm.sendMessage(new DestroyNode());
     }
 
     private void addChatMessage(final ChatMessage message) {

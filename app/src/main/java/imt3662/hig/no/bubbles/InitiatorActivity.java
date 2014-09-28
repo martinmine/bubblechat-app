@@ -71,7 +71,7 @@ public class InitiatorActivity extends Activity implements LocationReceiver, Mes
             makeContact(new LatLng(loc.getLatitude(), loc.getLongitude()));
         }
         else {
-            setLoadingText("Waiting for device registration");
+            setLoadingText(R.string.initiator_loading_pending_device_registration);
         }
     }
 
@@ -99,7 +99,7 @@ public class InitiatorActivity extends Activity implements LocationReceiver, Mes
     public void gotServerInfo(int userCount, int userId) {
         // go to main activity
 
-        setLoadingText("Done!");
+        setLoadingText(R.string.initiator_loading_done);
         MessageDelegater.getInstance().setReceiver(null);
         Intent intent = new Intent(getBaseContext(), MainActivity.class);
         intent.putExtra("user_count", userCount);
@@ -111,11 +111,11 @@ public class InitiatorActivity extends Activity implements LocationReceiver, Mes
 
     private void makeContact(LatLng loc) {
         Log.i("Loader", "Server, you there?");
-        setLoadingText("Connecting to server");
+        setLoadingText(R.string.initiator_loading_text);
         gcm.sendMessage(new ServerStatusRequest(loc.latitude, loc.longitude));
     }
 
-    private void setLoadingText(final String text) {
+    private void setLoadingText(final int text) {
         Handler handler = new Handler(this.getMainLooper());
         Runnable action = new Runnable() {
             @Override
@@ -139,7 +139,7 @@ public class InitiatorActivity extends Activity implements LocationReceiver, Mes
         }
         else {
             // Waiting for gps
-            setLoadingText("Waiting for GPS");
+            setLoadingText(R.string.initiator_loading_location);
         }
     }
 }

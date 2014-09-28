@@ -8,5 +8,7 @@
     <string name="title_activity_initiator">BubbleChat</string>
     <string name="initiator_loading_text">Creating your bubble</string>
     <string name="initiator_loading_location">Tracking location</string>
+    <string name="initiator_loading_pending_device_registration">Making soap water</string>
+    <string name="initiator_loading_done">Done</string>
 
 </resources>

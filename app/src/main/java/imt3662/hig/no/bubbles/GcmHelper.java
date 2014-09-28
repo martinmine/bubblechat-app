@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -11,9 +12,12 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import imt3662.hig.no.bubbles.MessageSerializing.MessageResponse;
+import imt3662.hig.no.bubbles.MessageSerializing.ServerStatusRequest;
 
 /**
  * Created by Martin on 14/09/26.
@@ -24,12 +28,14 @@ public class GcmHelper {
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String RECEIVER_ID = "437017129818";
-    private String registrationId;
 
     private static GcmHelper instance = null;
+
+    private String registrationId;
     private GoogleCloudMessaging gcm;
     private AtomicInteger lastMessageId;
     private MessageErrorListener errorListener;
+    private Timer pinger;
 
     private GcmHelper() { }
     private GcmHelper(Context context) {
@@ -138,5 +144,28 @@ public class GcmHelper {
             return false;
         }
         return true;
+    }
+
+    public void startPinging() {
+        if (this.pinger == null) {
+            final Handler handler = new Handler();
+            this.pinger = new Timer();
+
+            TimerTask doAsynchronousTask = new TimerTask() {
+                @Override
+                public void run() {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            Log.w("Pinger", "PING!");
+                            LocationProvider provider = LocationProvider.get(null, null);
+                            sendMessage(new ServerStatusRequest(provider.getLastKnownLocation().latitude,
+                                    provider.getLastKnownLocation().longitude));
+                        }
+                    });
+                }
+            };
+
+            pinger.schedule(doAsynchronousTask, 10000, 30000);
+        }
     }
 }
