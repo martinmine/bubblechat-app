@@ -12,6 +12,7 @@ import imt3662.hig.no.bubbles.MessageHandling.MessageDelegater;
 /**
  * Receives intents and behaves accordingly, also receives
  * messages being sent further to the message parsers.
+ * Code from gcm tutorial on https://developer.android.com/google/gcm/client.html
  * Created by Martin on 14/09/24.
  */
 public class GcmIntentService extends IntentService {
