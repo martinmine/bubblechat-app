@@ -7,4 +7,6 @@
     <string name="title_activity_initiator">BubbleChat</string>
     <string name="initiator_loading_text">Lager din boble</string>
     <string name="initiator_loading_location">Henter lokasjon</string>
+    <string name="initiator_loading_pending_device_registration">Lager såpevann</string>
+    <string name="initiator_loading_done">Ferdig!</string>
 </resources>
