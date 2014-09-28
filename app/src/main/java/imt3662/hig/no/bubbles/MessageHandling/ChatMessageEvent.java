@@ -8,6 +8,7 @@ import imt3662.hig.no.bubbles.ChatMessage;
 import imt3662.hig.no.bubbles.ColorRepository;
 
 /**
+ * Message event handler for when users sends chat messages.
  * Created by Martin on 14/09/25.
  */
 public class ChatMessageEvent implements MessageEventParser {

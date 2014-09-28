@@ -3,6 +3,7 @@ package imt3662.hig.no.bubbles.MessageHandling;
 import android.os.Bundle;
 
 /**
+ * Parses the message related to when a node/user enters the area.
  * Created by Martin on 14/09/25.
  */
 public class NodeEnteredEvent implements MessageEventParser {

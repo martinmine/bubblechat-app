@@ -1,9 +1,10 @@
 package imt3662.hig.no.bubbles.MessageSerializing;
 
 import imt3662.hig.no.bubbles.ChatMessage;
-import imt3662.hig.no.bubbles.MessageErrorListener;
 
 /**
+ * Serializes a message response containing properties about the user and
+ * the chat message the user wants to post to nearby nodes/users.
  * Created by Martin on 14/09/26.
  */
 public class PostChatMessage extends MessageResponse {

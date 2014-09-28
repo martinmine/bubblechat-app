@@ -1,6 +1,5 @@
 package imt3662.hig.no.bubbles;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -11,11 +10,9 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-
 import android.widget.TextView;
+
 import com.google.android.gms.maps.model.LatLng;
-
-
 
 import java.io.IOException;
 
@@ -23,8 +20,11 @@ import imt3662.hig.no.bubbles.MessageHandling.MessageDelegater;
 import imt3662.hig.no.bubbles.MessageHandling.MessageEventHandler;
 import imt3662.hig.no.bubbles.MessageSerializing.ServerStatusRequest;
 
-
-public class InitiatorActivity extends Activity implements LocationReceiver, MessageErrorListener, MessageEventHandler, DeviceRegisteredListener {
+/**
+ * Loading screen for the application
+ */
+public class InitiatorActivity extends Activity implements LocationReceiver,
+        MessageErrorListener, MessageEventHandler, DeviceRegisteredListener {
     private GcmHelper gcm;
     private LocationProvider locationProvider;
 
@@ -51,6 +51,7 @@ public class InitiatorActivity extends Activity implements LocationReceiver, Mes
     }
 
     /**
+     * Gets the current application version from the package info.
      * @return Current application version
      * Code from google tutorial
      */
@@ -65,6 +66,11 @@ public class InitiatorActivity extends Activity implements LocationReceiver, Mes
         }
     }
 
+    /**
+     * Called once we receive any location data, if gcm is ready, start server handshake,
+     * otherwise tell the user we are waiting for location services to get ready.
+     * @param loc User's location
+     */
     @Override
     public void locationChanged(Location loc) {
         if (!gcm.getRegistrationId().isEmpty()) {
@@ -75,26 +81,47 @@ public class InitiatorActivity extends Activity implements LocationReceiver, Mes
         }
     }
 
+    /**
+     * Called once an error occurs, tells the user that we cannot reach the server.
+     * @param ex The exception
+     */
     @Override
     public void failedToSend(IOException ex) {
-
+        Log.w("Fatal send error", ex.getMessage());
+        //TODO Show a message to the user here
     }
 
+    /**
+     * We don't care about this yet, as we are not authenticated towards the server yet
+     * @param message The chat message posted
+     */
     @Override
     public void messagePosted(ChatMessage message) {
 
     }
 
+    /**
+     * We don't care about this yet, as we are not authenticated towards the server yet
+     */
     @Override
     public void nodeEntered(int userId) {
 
     }
 
+    /**
+     * We don't care about this yet, as we are not authenticated towards the server yet
+     */
     @Override
     public void nodeLeft(int userId) {
 
     }
 
+    /**
+     * Called once we receive the first authentication message from the server,
+     * creates the main activity and sets information that shall be displayed there.
+     * @param userCount Amount of connected nodes/users within the area.
+     * @param userId The assigned user/node id that has been given to us.
+     */
     @Override
     public void gotServerInfo(int userCount, int userId) {
         // go to main activity
@@ -104,7 +131,7 @@ public class InitiatorActivity extends Activity implements LocationReceiver, Mes
         Intent intent = new Intent(getBaseContext(), MainActivity.class);
         intent.putExtra("user_count", userCount);
         intent.putExtra("user_id", userId);
-        this.locationProvider.destroy();
+        this.locationProvider.setLocationListener(null);
         startActivity(intent);
         finish();
     }
@@ -128,6 +155,10 @@ public class InitiatorActivity extends Activity implements LocationReceiver, Mes
         handler.post(action);
     }
 
+    /**
+     * Called once the device is registered on gcm.
+     * @param gcmId The gcm id which is a unique id being used when sending messages
+     */
     @Override
     public void registered(String gcmId) {
         Log.i("Loader", "Registered on gcm with id " + gcmId);
