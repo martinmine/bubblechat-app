@@ -1,8 +1,6 @@
 package imt3662.hig.no.bubbles;
 
 import android.content.Context;
-import android.location.Criteria;
-import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -10,31 +8,43 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.internal.c;
 import com.google.android.gms.maps.model.LatLng;
 
+/**
+ * Provides location information.
+ */
 public class LocationProvider {
-
+    private static LocationProvider instance = null;
     private LocationManager locationManager;
     private LocationListener locationListener;
     private LatLng location;
     private LocationReceiver listener;
 
-    public LocationProvider(final Context context, final LocationReceiver listener) {
+    /**
+     * Gets LocationProvider instance
+     * @param context The activity context
+     * @param listener Who shall receive location updates
+     * @return The LocationProvider instance
+     */
+    public static LocationProvider get(Context context, LocationReceiver listener) {
+        if (instance == null) {
+            instance = new LocationProvider(context, listener);
+        }
+        return instance;
+    }
+    private LocationProvider() {}
+    private LocationProvider(final Context context, final LocationReceiver listener) {
         this.locationManager =  (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         this.listener = listener;
         this.locationListener = new LocationListener() {
 
             @Override
             public void onLocationChanged(Location loc) {
-                double latitude;
-                double longitude;
                 Log.i("Location provider", "Got location: " + loc.getLatitude() + "," + loc.getLongitude());
+                location = new LatLng(loc.getLatitude(), loc.getLongitude());
 
-                latitude = loc.getLatitude();
-                longitude = loc.getLongitude();
-                location = new LatLng(latitude, longitude);
-                listener.locationChanged(loc);
+                if (listener != null)
+                    listener.locationChanged(loc);
             }
 
             @Override
@@ -51,6 +61,9 @@ public class LocationProvider {
             }
         };
 
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        /*
+        Joakim should feel free to fix this tomorrow
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
         criteria.setAltitudeRequired(false);
@@ -75,18 +88,39 @@ public class LocationProvider {
 
                 Log.i("PROVIDER", "GPS IS SET");
             }
-        }
+        }*/
     }
 
+    /**
+     * Gets the last known location of the user, may be null if nothing has been found.
+     * @return The location.
+     */
     public LatLng getLastKnownLocation() {
         return location;
     }
 
+    /**
+     * Gets the last known latitude.
+     * @return Latitude.
+     */
     public String getLastKnownLatitude() {
         return String.valueOf(location.latitude);
     }
 
+    /**
+     * Gets the last known longitude.
+     * @return Longitude.
+     */
     public String getLastKnownLongitude() {
         return String.valueOf(location.longitude);
+    }
+
+    /**
+     * Sets the listener which shall receive location updates.
+     * Can be null if we don't want any more updates.
+     * @param locationListener The callback object.
+     */
+    public void setLocationListener(LocationListener locationListener) {
+        this.locationListener = locationListener;
     }
 }

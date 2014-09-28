@@ -4,49 +4,41 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RoundRectShape;
-import android.location.Location;
+import android.media.audiofx.BassBoost;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import imt3662.hig.no.bubbles.MessageHandling.MessageDelegater;
 import imt3662.hig.no.bubbles.MessageHandling.MessageEventHandler;
+import imt3662.hig.no.bubbles.MessageSerializing.DestroyNode;
 import imt3662.hig.no.bubbles.MessageSerializing.PostChatMessage;
 import imt3662.hig.no.bubbles.MessageSerializing.ServerStatusRequest;
 
+/**
+ * Main activity of the application.
+ */
+public class MainActivity extends Activity implements MessageEventHandler, MessageErrorListener {
 
-public class MainActivity extends Activity implements MessageEventHandler, MessageErrorListener, LocationReceiver {
-    private List<ChatMessage> chatMessages;
-    private static final float chatMsgRadius = 20.0F; //radius of chat messages
     private GcmHelper gcm;
     private int currentUserID;
-    int longPressedMsgPosition = -1;
+    private int userCount;
+    private int longPressedMsgPosition = -1;
     private Menu menu;
 
     private LocationProvider locationProvider;
@@ -56,83 +48,66 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.locationProvider = new LocationProvider(this, this);
+        this.locationProvider = LocationProvider.get(this, null);
+
         ListView lv = (ListView) findViewById(R.id.listview);
         registerForContextMenu(lv);
 
-        chatMessages = new ArrayList<ChatMessage>();
+        this.gcm = GcmHelper.get(this, this);
+        this.gcm.startPinging();
 
-        //test chat messages
-        /*ChatMessage cm = new ChatMessage(1,"Hello world!", true, 60.0, 9.0,"Pels");
-        ChatMessage cm1 = new ChatMessage(1,"Hello world!2", true, 60.0, 60.0,"Anon");
-        ChatMessage cm2 = new ChatMessage(1,"Hello world!3",true, 60.0, 60.0 ,"Anon");
-        chatMessages.add(cm);
-        chatMessages.add(cm1);
-        chatMessages.add(cm2);*/
-        showStatusMessage("Tracking you down");
+        Intent intent = getIntent();
 
+        this.currentUserID = intent.getIntExtra("user_id", 0);
+        this.userCount = intent.getIntExtra("user_count", 0);
+
+        showStatusMessage("This is a public chat, behave!");
 
         populateListView();
-
-        if (!GcmHelper.checkPlayServices(this)) {
-            // TODO show error message that the user needs to upgrade google play services
-        }
-
-        SharedPreferences prefs = getSharedPreferences(MainActivity.class.getSimpleName(),
-                Context.MODE_PRIVATE);
-
-        this.gcm = GcmHelper.get(this, this);
-        this.currentUserID = -1;
-        this.gcm.beginRegistering(prefs, getAppVersion(this), new DeviceRegisteredListener() {
-            @Override
-            public void registered(String gcmId) {
-                Log.i("gcm", "Registered on gcm with id " + gcmId);
-            }
-        });
 
         MessageDelegater.getInstance().setReceiver(this);
     }
 
     /**
-     * @return Current application version
-     * Code from google tutorial
+     * Called once a message was failed to be sent to gcm.
+     * In that case, we should display an error message to the user.
+     * @param ex The exception.
      */
-    private static int getAppVersion(Context context) {
-        try {
-            PackageInfo packageInfo = context.getPackageManager()
-                    .getPackageInfo(context.getPackageName(), 0);
-            return packageInfo.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            // should never happen
-            throw new RuntimeException("Could not get package name: " + e);
-        }
-    }
-
     @Override
     public void failedToSend(IOException ex) {
         Log.w("gcm", "Failed to send message: " + ex.getMessage());
         showStatusMessage("Unable to send message");
     }
 
+    /**
+     * Add a chat message to the user output.
+     * @param message The chat message posted.
+     */
     @Override
     public void messagePosted(ChatMessage message) {
         Log.i("gcm", "posted a message: " + message.getMsg());
         if (message.getUserID() != this.currentUserID) {
-            int color = new Color().argb(255, new Random().nextInt(255),
-                    new Random().nextInt(255), new Random().nextInt(255));
-            message.setColor(color);
             addChatMessage(message);
         }
     }
 
+    /**
+     * Notifies that a new user entered the chat.
+     * @param userId
+     */
     @Override
     public void nodeEntered(int userId) {
-        if (userId != this.currentUserID) {
+        if (userId != this.currentUserID && this.currentUserID > 0) {
             showStatusMessage("Someone joined the chat");
         }
         Log.i("gcm", "node entered: " + userId);
     }
 
+    /**
+     * Notify the user that he got kicked out of the server if it is the user's user-id,
+     * otherwise post that someone left the chat.
+     * @param userId Id of the user leaving the chat.
+     */
     @Override
     public void nodeLeft(int userId) {
         if (userId == this.currentUserID) {
@@ -148,24 +123,26 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         Log.i("gcm", "node left: " + userId);
     }
 
+    /**
+     * Called once we receive an update from the server regarding our user-id and the user count.
+     * @param userCount Amount of connected nodes/users within the area.
+     * @param userId The assigned user/node id that has been given to us.
+     */
     @Override
-    public void gotServerInfo(final int userCount, int userId) {
+    public void gotServerInfo(final int userCount, final int userId) {
         Log.i("gcm", "Got server info count: " + userCount + ", your user ID: " + userId);
         if (this.currentUserID == 0) {
             this.currentUserID = userId;
-            showStatusMessage("You are talking to " + userCount + " people");
+            showStatusMessage("Reconnected, you are talking to " + userCount + " people");
         }
 
-        // TODO update user count thingy
-        //Done!
-        //updates menubar to show number of users
+        this.userCount = userCount;
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-
                 MenuItem numberOfUsers = menu.findItem(R.id.number_users);
                 numberOfUsers.setTitle(String.valueOf(userCount));
-
             }
         });
     }
@@ -174,18 +151,12 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-
         this.menu = menu;
-        return true;
-    }
 
-    @Override
-    public void locationChanged(Location loc) {
-        if (currentUserID == -1 && gcm != null && !gcm.getRegistrationId().isEmpty()) {
-            showStatusMessage("Found you! Hang on while we're snitching on you");
-            currentUserID = 0;
-            gcm.sendMessage(new ServerStatusRequest(loc.getLatitude(), loc.getLongitude()));
-        }
+        MenuItem numberOfUsers = menu.findItem(R.id.number_users);
+        numberOfUsers.setTitle(String.valueOf(userCount));
+
+        return true;
     }
 
     @Override
@@ -201,89 +172,31 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         return super.onOptionsItemSelected(item);
     }
 
-    // Inner class
-    // Serves as adapter between the contacts and the GUI contact list
-    private class ChatListAdapter extends ArrayAdapter<ChatMessage> {
 
-        public ChatListAdapter() {
-
-            super(MainActivity.this, R.layout.listitem, chatMessages);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            if (convertView == null) {
-
-                convertView = getLayoutInflater().inflate(R.layout.listitem, parent, false);
-            }
-
-            final ChatMessage currentMessage = chatMessages.get(position);
-
-
-            TextView msgText = (TextView) convertView.findViewById(R.id.msgText);
-
-            RelativeLayout rv = (RelativeLayout) convertView.findViewById(R.id.relativeLayout);
-
-
-            ShapeDrawable shapeDrawable = new ShapeDrawable();
-
-            //creating the graphics for the chat message
-            float[] rad = {chatMsgRadius, chatMsgRadius, chatMsgRadius, chatMsgRadius,
-                    chatMsgRadius, chatMsgRadius, chatMsgRadius, chatMsgRadius};
-            shapeDrawable.setShape(new RoundRectShape(rad, null, rad));
-            shapeDrawable.getPaint().setColor(currentMessage.getColor());
-            rv.setBackground(shapeDrawable);
-
-            if(currentMessage.getUsername() != null && !currentMessage.getUsername().isEmpty()){
-                msgText.setText(currentMessage.getUsername() + ": " + currentMessage.getMsg());
-            }
-            else {
-                msgText.setText(currentMessage.getMsg());
-            }
-
-            /*
-            convertView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-
-                    Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-                    intent.putExtra("TRACED_LATITUDE", currentMessage.getLatitude());
-                    intent.putExtra("TRACED_LONGITUDE", currentMessage.getLongitude());
-                    intent.putExtra("TRACED_USERNAME", currentMessage.getUsername());
-                    intent.putExtra("LATITUDE", "60.0");
-                    intent.putExtra("LONGITUDE", "60.0");
-                    startActivity(intent);
-
-                    return true;
-                }
-            });*/
-
-            return convertView;
-        }
-
-    }
 
     private void populateListView() {
-
-        ArrayAdapter<ChatMessage> adapter = new ChatListAdapter();
+        ArrayAdapter<ChatMessage> adapter = new ChatListAdapter(this, getLayoutInflater());
         ListView listView = (ListView)findViewById(R.id.listview);
         listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         listView.setStackFromBottom(true);
         listView.setAdapter(adapter);
-
     }
 
-    //used for testing the chat locally (AND NOW TOWARDS THE SERVER!)
+    /**
+     * Creates a new message and post it to the server.
+     */
     public void newMessage(View view) {
         EditText editText = (EditText)findViewById(R.id.editText);
         if (editText.getText().length() > 0 && this.currentUserID > 0) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+            boolean track = prefs.getBoolean(getString(R.string.preference_key_trackme), false);
+            String username = prefs.getString(getString(R.string.preference_key_username), "");
 
             ChatMessage newMsg = new ChatMessage(this.currentUserID,
-                    String.valueOf(editText.getText()), true,
+                    String.valueOf(editText.getText()), track,
                     locationProvider.getLastKnownLocation(),
-                    "", ChatMessage.USER_MESSAGE);
-
+                    username, ChatMessage.USER_MESSAGE);
 
             gcm.sendMessage(new PostChatMessage(newMsg));
             addChatMessage(newMsg);
@@ -292,7 +205,6 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
             InputMethodManager imm = (InputMethodManager) getSystemService(
                     Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-            //populateListView();
         }
     }
 
@@ -301,7 +213,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         addChatMessage(statusMessage);
     }
 
-    //this is here just because.
+    // TODO remove this?
     public void toast(View view) {
         Toast.makeText(getApplicationContext(), "Valg",
                 Toast.LENGTH_SHORT).show();
@@ -311,17 +223,13 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
-
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = getMenuInflater();
 
         inflater.inflate(R.menu.msg_long_click, menu);
 
-
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         longPressedMsgPosition = info.position;
-
-
     }
 
     @Override
@@ -329,8 +237,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
             case R.id.findOnMap:
-                ChatMessage msg = chatMessages.get(longPressedMsgPosition);
-
+                ChatMessage msg = ChatListAdapter.getChatMessage(longPressedMsgPosition);
 
                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                 intent.putExtra("TRACED_LATITUDE", msg.getLatitude());
@@ -356,7 +263,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         Runnable action = new Runnable() {
             @Override
             public void run() {
-                chatMessages.add(message);
+                ChatListAdapter.addChatMessage(message);
                 ListView listView = (ListView) findViewById(R.id.listview);
                 ChatListAdapter adapter = (ChatListAdapter) listView.getAdapter();
                 adapter.notifyDataSetChanged();
@@ -365,6 +272,4 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
 
         handler.post(action);
     }
-
-
 }

@@ -27,6 +27,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/initiator_loading_text"
+            android:textColor="@color/wallet_bright_foreground_holo_dark"
             android:id="@+id/loadText"
             android:layout_gravity="center_horizontal" />
 
