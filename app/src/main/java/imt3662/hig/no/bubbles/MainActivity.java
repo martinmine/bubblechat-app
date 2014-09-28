@@ -3,8 +3,11 @@ package imt3662.hig.no.bubbles;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.audiofx.BassBoost;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -185,12 +188,15 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     public void newMessage(View view) {
         EditText editText = (EditText)findViewById(R.id.editText);
         if (editText.getText().length() > 0 && this.currentUserID > 0) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+            boolean track = prefs.getBoolean(getString(R.string.preference_key_trackme), false);
+            String username = prefs.getString(getString(R.string.preference_key_username), "");
 
             ChatMessage newMsg = new ChatMessage(this.currentUserID,
-                    String.valueOf(editText.getText()), true,
+                    String.valueOf(editText.getText()), track,
                     locationProvider.getLastKnownLocation(),
-                    "", ChatMessage.USER_MESSAGE);
-
+                    username, ChatMessage.USER_MESSAGE);
 
             gcm.sendMessage(new PostChatMessage(newMsg));
             addChatMessage(newMsg);
@@ -199,7 +205,6 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
             InputMethodManager imm = (InputMethodManager) getSystemService(
                     Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-            //populateListView();
         }
     }
 
