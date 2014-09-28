@@ -1,0 +1,16 @@
+<resources>
+        <string name="title_activity_settings">Settings</string>
+
+    <string name="preference_key_trackme">trackme</string>
+    <string name="preference_title_trackme">Finn meg</string>
+    <string name="preferences_summary_trackme">Andre kan se din lokasjon</string>
+
+    <string name="preference_key_username">username</string>
+    <string name="preference_title_username">Kallenavn</string>
+    <string name="preference_default_username"></string>
+    <string name="preference_hint_username">Ditt kallenavn</string>
+    <string name="preference_summary_username">Kallenavnet vil vises på dine meldinger</string>
+    <!-- Strings related to Settings -->
+
+
+</resources>
