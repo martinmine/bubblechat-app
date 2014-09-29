@@ -154,9 +154,11 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                MenuItem numberOfUsers = menu.findItem(R.id.number_users);
-                //numberOfUsers.setShowAsAction(MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-                numberOfUsers.setTitle(String.valueOf(userCount));
+                if (menu != null) {
+                    MenuItem numberOfUsers = menu.findItem(R.id.number_users);
+                    //numberOfUsers.setShowAsAction(MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+                    numberOfUsers.setTitle(String.valueOf(userCount));
+                }
             }
         });
     }
@@ -185,8 +187,6 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         }
         return super.onOptionsItemSelected(item);
     }
-
-
 
     private void populateListView() {
         ArrayAdapter<ChatMessage> adapter = new ChatListAdapter(this, getLayoutInflater());
@@ -278,9 +278,5 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         };
 
         handler.post(action);
-    }
-
-    public void showMessageOptions(View view) {
-
     }
 }
