@@ -24,6 +24,7 @@ class ChatListAdapter extends ArrayAdapter<ChatMessage> {
     private static final float[] MSG_RAD = {MSG_CORNER_RADIUS, MSG_CORNER_RADIUS,
             MSG_CORNER_RADIUS, MSG_CORNER_RADIUS, MSG_CORNER_RADIUS,
             MSG_CORNER_RADIUS, MSG_CORNER_RADIUS, MSG_CORNER_RADIUS};
+
     /**
      * Gest a chat message from the messages being stored in the view
      * @param i Index of the chat message
@@ -72,13 +73,15 @@ class ChatListAdapter extends ArrayAdapter<ChatMessage> {
         if (currentMessage.hasFixedColor() == false) {
             spinner.setVisibility(View.INVISIBLE);
             spinner.setOnTouchListener(null);
+            convertView.setClickable(true); // Avoid long key press (haha, tricked u!)
         }
         else {
             spinner.setVisibility(View.VISIBLE);
             spinner.setOnTouchListener(this.touchListener);
+            convertView.setClickable(false);
         }
 
-        if(currentMessage.getUsername() != null && !currentMessage.getUsername().isEmpty()){
+        if (currentMessage.getUsername() != null && !currentMessage.getUsername().isEmpty()){
             msgText.setText(currentMessage.getUsername() + ": " + currentMessage.getMsg());
         }
         else {
