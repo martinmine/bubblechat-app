@@ -38,10 +38,10 @@ import imt3662.hig.no.bubbles.MessageSerializing.ServerStatusRequest;
  */
 public class MainActivity extends Activity implements MessageEventHandler, MessageErrorListener {
     private static List<Integer> ignoredUsers = new LinkedList<Integer>();
+    private static int currentUserID = -1;
+    private static int userCount;
 
     private GcmHelper gcm;
-    private int currentUserID;
-    private int userCount;
     private int longPressedMsgPosition = -1;
     private Menu menu;
 
@@ -65,15 +65,18 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         this.gcm = GcmHelper.get(this, this);
         this.gcm.startPinging();
 
+        if (currentUserID == -1)
+            showStatusMessage(R.string.chatmessage_welcome);
+
         Intent intent = getIntent();
 
-        this.currentUserID = intent.getIntExtra("user_id", 0);
-        this.userCount = intent.getIntExtra("user_count", 0);
+        this.currentUserID = intent.getIntExtra("user_id", currentUserID);
+        this.userCount = intent.getIntExtra("user_count", userCount);
 
-        showStatusMessage(R.string.chatmessage_welcome);
+        intent.removeExtra("user_id");
+        intent.removeExtra("user_count");
 
         populateListView();
-
         MessageDelegater.getInstance().setReceiver(this);
     }
 
