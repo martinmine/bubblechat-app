@@ -283,4 +283,20 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     public void showMessageOptions(View view) {
 
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onPause();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        gcm.destroy(prefs);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onResume();
+        Intent intent = new Intent(this, InitiatorActivity.class);
+        startActivity(intent);
+    }
 }
+
+

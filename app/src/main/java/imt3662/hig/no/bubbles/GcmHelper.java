@@ -209,4 +209,22 @@ public class GcmHelper {
             pinger.schedule(doAsynchronousTask, 10000, 30000);
         }
     }
+
+    public void destroy(final SharedPreferences prefs) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    gcm.unregister();
+                    gcm.close();
+                    setRegistrationId(null, prefs);
+                    Log.w("SUCCESS", "DSDAD");
+                }
+                catch(IOException ioe) {
+                    Log.w("ERROR", ioe.getMessage());
+                }
+                return null;
+            }
+        }.execute();
+    }
 }
