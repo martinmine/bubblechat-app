@@ -29,6 +29,7 @@ import java.util.List;
 
 import imt3662.hig.no.bubbles.MessageHandling.MessageDelegater;
 import imt3662.hig.no.bubbles.MessageHandling.MessageEventHandler;
+import imt3662.hig.no.bubbles.MessageHandling.NodeLeft;
 import imt3662.hig.no.bubbles.MessageSerializing.DestroyNode;
 import imt3662.hig.no.bubbles.MessageSerializing.PostChatMessage;
 import imt3662.hig.no.bubbles.MessageSerializing.ServerStatusRequest;
@@ -279,27 +280,14 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
 
         handler.post(action);
     }
-<<<<<<< HEAD
-
-    public void showMessageOptions(View view) {
-
-    }
 
     @Override
     protected void onDestroy() {
-        super.onPause();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        gcm.destroy(prefs);
+        super.onDestroy();
+        gcm.stopPining();
+        gcm.sendMessage(new DestroyNode());
+        Log.w("MainActivity", "got rekd");
     }
-
-    @Override
-    protected void onRestart() {
-        super.onResume();
-        Intent intent = new Intent(this, InitiatorActivity.class);
-        startActivity(intent);
-    }
-=======
->>>>>>> 8131c937382f4f8fa9c183ec6bd2156e0e2beb25
 }
 
 

@@ -152,7 +152,7 @@ public class GcmHelper {
 
     /**
      * Gets the gcm registration id
-     * @return
+     * @return Registration ID
      */
     public String getRegistrationId() {
         return registrationId;
@@ -206,25 +206,15 @@ public class GcmHelper {
                 }
             };
 
-            pinger.schedule(doAsynchronousTask, 10000, 30000);
+            pinger.schedule(doAsynchronousTask, 1000, 30000);
         }
     }
 
-    public void destroy(final SharedPreferences prefs) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-                    gcm.unregister();
-                    gcm.close();
-                    setRegistrationId(null, prefs);
-                    Log.w("SUCCESS", "DSDAD");
-                }
-                catch(IOException ioe) {
-                    Log.w("ERROR", ioe.getMessage());
-                }
-                return null;
-            }
-        }.execute();
+    /**
+     * Stops pinging the server
+     */
+    public void stopPining() {
+        this.pinger.cancel();
+        this.pinger = null;
     }
 }
