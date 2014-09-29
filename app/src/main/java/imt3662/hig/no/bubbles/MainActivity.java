@@ -155,6 +155,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
             @Override
             public void run() {
                 MenuItem numberOfUsers = menu.findItem(R.id.number_users);
+                //numberOfUsers.setShowAsAction(MenuItem.SHOW_AS_ACTION_WITH_TEXT);
                 numberOfUsers.setTitle(String.valueOf(userCount));
             }
         });
@@ -166,7 +167,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         getMenuInflater().inflate(R.menu.main, menu);
         this.menu = menu;
 
-        MenuItem numberOfUsers = menu.findItem(R.id.number_users);
+        MenuItem numberOfUsers = menu.findItem(R.id.number_users_icon);
         numberOfUsers.setTitle(String.valueOf(userCount));
 
         return true;
@@ -277,5 +278,9 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         };
 
         handler.post(action);
+    }
+
+    public void showMessageOptions(View view) {
+
     }
 }
