@@ -266,6 +266,14 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         }
     }
 
+    public boolean showMyLocation(MenuItem item) {
+        Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+        intent.putExtra("LATITUDE", locationProvider.getLastKnownLatitude());
+        intent.putExtra("LONGITUDE", locationProvider.getLastKnownLongitude());
+        startActivity(intent);
+        return true;
+    }
+
     private void addChatMessage(final ChatMessage message) {
         Handler handler = new Handler(this.getMainLooper());
         Runnable action = new Runnable() {

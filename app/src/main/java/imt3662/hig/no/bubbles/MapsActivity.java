@@ -77,24 +77,28 @@ public class MapsActivity extends FragmentActivity {
         String tracedMessageLongitude = intent.getStringExtra("TRACED_LONGITUDE");
         String tracedMessageUsername = intent.getStringExtra("TRACED_USERNAME");
 
-        if ((latitude.length() > 0 || latitude != null) &&
-                (longitude.length() > 0 || longitude == null)) {
-            userLatitude = Double.parseDouble(latitude);
-            userLongitude = Double.parseDouble(longitude);
-            // Setting user position with marker and circle displaying broadcasting area
-            position(new LatLng(userLatitude, userLongitude), 2000);
+        if (latitude != null && longitude != null) {
+            if (latitude.length() > 0 && longitude.length() > 0) {
 
-            if ((tracedMessageLatitude.length() > 0 || tracedMessageLatitude == null) &&
-                    (tracedMessageLongitude.length() > 0 || tracedMessageLongitude == null)) {
-                trackedMessageLatitude = Double.parseDouble(tracedMessageLatitude);
-                trackedMessageLongitude = Double.parseDouble(tracedMessageLongitude);
-                // If a username was found for the tracked message
-                if (tracedMessageUsername.length() > 0) {
-                    setTracedMessageMarker(new LatLng(trackedMessageLatitude, trackedMessageLongitude),
-                            tracedMessageUsername);
-                } else  // Place pin as Anonymous user
-                    setTracedMessageMarker(new LatLng(trackedMessageLatitude, trackedMessageLongitude),
-                            "Anonymous user");
+                userLatitude = Double.parseDouble(latitude);
+                userLongitude = Double.parseDouble(longitude);
+                // Setting user position with marker and circle displaying broadcasting area
+                position(new LatLng(userLatitude, userLongitude), 10000);
+
+                if(tracedMessageLatitude != null && tracedMessageLongitude != null) {
+                    if (tracedMessageLatitude.length() > 0 && tracedMessageLongitude != null) {
+
+                        trackedMessageLatitude = Double.parseDouble(tracedMessageLatitude);
+                        trackedMessageLongitude = Double.parseDouble(tracedMessageLongitude);
+                        // If a username was found for the tracked message
+                        if (tracedMessageUsername.length() > 0) {
+                            setTracedMessageMarker(new LatLng(trackedMessageLatitude,
+                                     trackedMessageLongitude), tracedMessageUsername);
+                        } else  // Place pin as Anonymous user
+                            setTracedMessageMarker(new LatLng(trackedMessageLatitude,
+                                          trackedMessageLongitude), "Anonymous user");
+                    }
+                }
             }
         }
     }
@@ -110,7 +114,7 @@ public class MapsActivity extends FragmentActivity {
                 .strokeWidth(1);
 
         mMap.addCircle(circleOptions);
-        CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(latLng, 11.0f);
+        CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(latLng, 10.0f);
         mMap.animateCamera(yourLocation);
     }
 
