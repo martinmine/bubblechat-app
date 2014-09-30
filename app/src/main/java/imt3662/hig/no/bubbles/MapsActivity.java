@@ -78,17 +78,17 @@ public class MapsActivity extends FragmentActivity implements SensorEventListene
 
         if (latitude != null && longitude != null && radius != null
                 && !latitude.isEmpty() && !longitude.isEmpty() && !radius.isEmpty()) {
-            int userRadius = Integer.parseInt(radius);
-            double userLatitude = Double.parseDouble(latitude);
-            double userLongitude = Double.parseDouble(longitude);
+            int userRadius = Integer.valueOf(radius);
+            double userLatitude = Double.valueOf(latitude);
+            double userLongitude = Double.valueOf(longitude);
             this.userPosition = new LatLng(userLatitude, userLongitude);
             // Setting user position with marker and circle displaying broadcasting area
             position(this.userPosition, userRadius);
 
             if(tracedMessageLatitude != null && !tracedMessageLatitude.isEmpty() &&
                     tracedMessageLongitude != null && !tracedMessageLongitude.isEmpty()) {
-                double trackedMessageLatitude = Double.parseDouble(tracedMessageLatitude);
-                double trackedMessageLongitude = Double.parseDouble(tracedMessageLongitude);
+                double trackedMessageLatitude = Double.valueOf(tracedMessageLatitude);
+                double trackedMessageLongitude = Double.valueOf(tracedMessageLongitude);
 
                 // If a username was found for the tracked message
                 if (!tracedMessageUsername.isEmpty()) {
