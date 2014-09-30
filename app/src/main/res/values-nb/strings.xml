@@ -17,5 +17,5 @@
     <string name="chatmessage_kicked_reconnect">Bobla sprakk, prøver å gjenopprette</string>
     <string name="chatmessage_someone_left">Noen har forlatt bobla</string>
     <string name="chatmessage_reconnect">Du er tilbake i bobla</string>
-
+    <string name="error_compass_not_fount">Kunne ikke orientere kartet: Finner ikke noe kompass</string>
 </resources>

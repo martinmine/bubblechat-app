@@ -19,7 +19,7 @@
     <string name="chatmessage_kicked_reconnect">Your bubble burst! Trying to reconnect</string>
     <string name="chatmessage_someone_left">Someone left your bubble</string>
     <string name="chatmessage_reconnect">You have been reconnected</string>
-
+    <string name="error_compass_not_fount">Unable to orient map: No compass found</string>
 
 
 
