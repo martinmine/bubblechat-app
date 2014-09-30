@@ -6,7 +6,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -14,6 +13,8 @@ import com.google.android.gms.maps.model.LatLng;
  * Provides location information.
  */
 public class LocationProvider {
+    static final int UPDATE_INTERVAL = 180000;
+
     private static LocationProvider instance = null;
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -45,42 +46,35 @@ public class LocationProvider {
 
                 if (listener != null)
                     listener.locationChanged(loc);
-
-                if (loc.getAccuracy() < 50.0f) {
-                    locationManager.removeUpdates(this);
-                }
             }
 
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {}
 
             @Override
-            public void onProviderEnabled(String provider) {
-                Toast.makeText(context.getApplicationContext(), provider + " enabled", Toast.LENGTH_SHORT).show();
-            }
+            public void onProviderEnabled(String provider) { }
 
             @Override
-            public void onProviderDisabled(String provider) {
-                Toast.makeText(context.getApplicationContext(), provider + " disabled", Toast.LENGTH_LONG).show();
-            }
+            public void onProviderDisabled(String provider) { }
         };
-
 
         if (locationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER) &&
                                             locationManager.isProviderEnabled("network")) {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, 0, locationListener);
             Log.i("PROVIDER", "NETWORK IS SET");
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                    UPDATE_INTERVAL, 0, locationListener);
+
         }
         else if (locationManager.getAllProviders().contains(LocationManager.GPS_PROVIDER) &&
                                                  locationManager.isProviderEnabled("gps")) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 0, locationListener);
             Log.i("PROVIDER", "GPS IS SET");
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                    UPDATE_INTERVAL, 0, locationListener);
         }
         else {
             throw new Exception("No provider available");
         }
     }
-
 
     /**
      * Gets the last known location of the user, may be null if nothing has been found.

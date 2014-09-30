@@ -152,7 +152,7 @@ public class GcmHelper {
 
     /**
      * Gets the gcm registration id
-     * @return
+     * @return Registration ID
      */
     public String getRegistrationId() {
         return registrationId;
@@ -206,7 +206,15 @@ public class GcmHelper {
                 }
             };
 
-            pinger.schedule(doAsynchronousTask, 10000, 30000);
+            pinger.schedule(doAsynchronousTask, 1000, 30000);
         }
+    }
+
+    /**
+     * Stops pinging the server
+     */
+    public void stopPining() {
+        this.pinger.cancel();
+        this.pinger = null;
     }
 }

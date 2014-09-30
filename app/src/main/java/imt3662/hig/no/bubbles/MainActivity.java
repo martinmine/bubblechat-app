@@ -29,6 +29,7 @@ import java.util.List;
 
 import imt3662.hig.no.bubbles.MessageHandling.MessageDelegater;
 import imt3662.hig.no.bubbles.MessageHandling.MessageEventHandler;
+import imt3662.hig.no.bubbles.MessageHandling.NodeLeft;
 import imt3662.hig.no.bubbles.MessageSerializing.DestroyNode;
 import imt3662.hig.no.bubbles.MessageSerializing.PostChatMessage;
 import imt3662.hig.no.bubbles.MessageSerializing.ServerStatusRequest;
@@ -279,4 +280,14 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
 
         handler.post(action);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        gcm.stopPining();
+        gcm.sendMessage(new DestroyNode());
+        Log.w("MainActivity", "got rekd");
+    }
 }
+
+
