@@ -53,17 +53,21 @@ public class MessageDelegater {
     /**
      * Handles a message from gcm and forwards it to the parser if it is a known message.
      * @param message The message to handle
+     * @return True if the message was a known message and was handled, otherwise false
      */
-    public void handleMessage(Bundle message) {
+    public boolean handleMessage(Bundle message) {
         String identifier = message.getString("identifier");
         MessageEventParser parser = this.handlers.get(identifier);
 
         if (parser != null && this.receiver != null) {
             Log.i("Handling message", identifier);
             parser.parse(this.receiver, message);
+            return true;
         }
         else {
             Log.w("Parser", "Unknown message: " + identifier);
         }
+
+        return false;
     }
 }

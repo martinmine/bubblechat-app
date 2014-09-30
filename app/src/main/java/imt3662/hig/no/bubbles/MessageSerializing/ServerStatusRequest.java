@@ -8,7 +8,6 @@ package imt3662.hig.no.bubbles.MessageSerializing;
  */
 public class ServerStatusRequest extends MessageResponse {
     public ServerStatusRequest(double lat, double lng) {
-        super();
         setValue("latitude", lat);
         setValue("longitude", lng);
     }
