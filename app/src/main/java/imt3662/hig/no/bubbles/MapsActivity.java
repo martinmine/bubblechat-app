@@ -7,10 +7,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -22,13 +20,12 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity {
+public class MapsActivity extends FragmentActivity implements SensorEventListener {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private LatLng userPosition;
     private Sensor compass;
     private SensorManager sensorManager;
-    private SensorEventListener sensorEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,30 +35,11 @@ public class MapsActivity extends FragmentActivity {
 
         this.sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         this.compass = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        this.sensorEventListener = new SensorEventListener() {
-            @Override
-            public void onSensorChanged(SensorEvent sensorEvent) {
-                if (mMap != null && sensorEvent.values.length > 0) {
-                    updateCamera(sensorEvent.values[0]);
-                }
-            }
-
-            @Override
-            public void onAccuracyChanged(Sensor sensor, int i) { }
-        };
-        sensorManager.registerListener(this.sensorEventListener, compass, SensorManager.SENSOR_DELAY_NORMAL);
+        this.sensorManager.registerListener(this, compass, SensorManager.SENSOR_DELAY_NORMAL);
 
         if (compass == null) {
             Toast.makeText(getApplicationContext(), getText(R.string.error_compass_not_fount), Toast.LENGTH_SHORT).show();
         }
-    }
-
-    // Cose based on http://stackoverflow.com/a/14831267
-    private void updateCamera(float bearing) {
-        CameraPosition currentPlace = new CameraPosition.Builder()
-                .target(this.userPosition)
-                .bearing(bearing).tilt(65.5f).zoom(18f).build();
-        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(currentPlace));
     }
 
     @Override
@@ -90,12 +68,6 @@ public class MapsActivity extends FragmentActivity {
      * This is where we can add markers or lines, add listeners or move the camera. In this case, we
      */
     private void setUpMap() {
-        int userRadius;
-        double userLatitude;
-        double userLongitude;
-        double trackedMessageLatitude;
-        double trackedMessageLongitude;
-
         Intent intent = getIntent();
         String radius = intent.getStringExtra("RADIUS");
         String latitude = intent.getStringExtra("LATITUDE");
@@ -104,35 +76,33 @@ public class MapsActivity extends FragmentActivity {
         String tracedMessageLongitude = intent.getStringExtra("TRACED_LONGITUDE");
         String tracedMessageUsername = intent.getStringExtra("TRACED_USERNAME");
 
-        if (latitude != null && longitude != null && radius != null) {
-            if (latitude.length() > 0 && longitude.length() > 0) {
-                userRadius = Integer.parseInt(radius);
-                userLatitude = Double.parseDouble(latitude);
-                userLongitude = Double.parseDouble(longitude);
-                this.userPosition = new LatLng(userLatitude, userLongitude);
-                // Setting user position with marker and circle displaying broadcasting area
-                position(this.userPosition, 10000);
+        if (latitude != null && longitude != null && radius != null
+                && !latitude.isEmpty() && !longitude.isEmpty() && !radius.isEmpty()) {
+            int userRadius = Integer.parseInt(radius);
+            double userLatitude = Double.parseDouble(latitude);
+            double userLongitude = Double.parseDouble(longitude);
+            this.userPosition = new LatLng(userLatitude, userLongitude);
+            // Setting user position with marker and circle displaying broadcasting area
+            position(this.userPosition, userRadius);
 
-                if(tracedMessageLatitude != null && tracedMessageLongitude != null) {
-                    if (tracedMessageLatitude.length() > 0 && tracedMessageLongitude != null) {
-                        trackedMessageLatitude = Double.parseDouble(tracedMessageLatitude);
-                        trackedMessageLongitude = Double.parseDouble(tracedMessageLongitude);
-                        // If a username was found for the tracked message
-                        if (tracedMessageUsername.length() > 0) {
-                            setTracedMessageMarker(new LatLng(trackedMessageLatitude,
-                                     trackedMessageLongitude), tracedMessageUsername);
-                        } else  // Place pin as Anonymous user
-                            setTracedMessageMarker(new LatLng(trackedMessageLatitude,
-                                          trackedMessageLongitude), "Anonymous user");
-                    }
-                }
+            if(tracedMessageLatitude != null && !tracedMessageLatitude.isEmpty() &&
+                    tracedMessageLongitude != null && !tracedMessageLongitude.isEmpty()) {
+                double trackedMessageLatitude = Double.parseDouble(tracedMessageLatitude);
+                double trackedMessageLongitude = Double.parseDouble(tracedMessageLongitude);
+
+                // If a username was found for the tracked message
+                if (!tracedMessageUsername.isEmpty()) {
+                    setTracedMessageMarker(new LatLng(trackedMessageLatitude,
+                        trackedMessageLongitude), tracedMessageUsername);
+                } else  // Place pin as Anonymous user
+                    setTracedMessageMarker(new LatLng(trackedMessageLatitude,
+                        trackedMessageLongitude), getString(R.string.map_anon_user));
             }
         }
     }
 
     private void position(LatLng latLng, int radius) {
-
-        mMap.addMarker(new MarkerOptions().position(latLng).title("You are here"));
+        mMap.addMarker(new MarkerOptions().position(latLng).title(getString(R.string.map_marker_you)));
         CircleOptions circleOptions = new CircleOptions()
                 .center(latLng)   //set center
                 .radius(radius)   //set radius in meters
@@ -146,7 +116,25 @@ public class MapsActivity extends FragmentActivity {
     }
 
     private void setTracedMessageMarker(LatLng latLng, String username) {
-
         mMap.addMarker(new MarkerOptions().position(latLng).title(username));
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        if (mMap != null && sensorEvent.values.length > 0) {
+            CameraPosition currentPlace = new CameraPosition.Builder()
+                    .target(this.userPosition)
+                    .bearing(sensorEvent.values[0]).build();
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(currentPlace));
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) { }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.sensorManager.unregisterListener(this);
     }
 }

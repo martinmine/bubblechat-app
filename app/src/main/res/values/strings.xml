@@ -20,6 +20,8 @@
     <string name="chatmessage_someone_left">Someone left your bubble</string>
     <string name="chatmessage_reconnect">You have been reconnected</string>
     <string name="error_compass_not_fount">Unable to orient map: No compass found</string>
+    <string name="map_marker_you">You</string>
+    <string name="map_anon_user">Unknown user</string>
 
 
 
