@@ -111,11 +111,7 @@ public class MapsActivity extends FragmentActivity {
                 userLongitude = Double.parseDouble(longitude);
                 this.userPosition = new LatLng(userLatitude, userLongitude);
                 // Setting user position with marker and circle displaying broadcasting area
-<<<<<<< HEAD
-                position(new LatLng(userLatitude, userLongitude), userRadius);
-=======
                 position(this.userPosition, 10000);
->>>>>>> eb89c168af3352c5c3a88fa4ec75059154af0817
 
                 if(tracedMessageLatitude != null && tracedMessageLongitude != null) {
                     if (tracedMessageLatitude.length() > 0 && tracedMessageLongitude != null) {
