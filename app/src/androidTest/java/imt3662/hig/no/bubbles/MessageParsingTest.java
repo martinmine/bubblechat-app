@@ -2,7 +2,6 @@ package imt3662.hig.no.bubbles;
 
 import android.os.Bundle;
 import android.test.AndroidTestCase;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -14,38 +13,30 @@ import imt3662.hig.no.bubbles.MessageHandling.MessageEventHandler;
  * Created by Martin on 14/09/30.
  */
 public class MessageParsingTest extends AndroidTestCase implements MessageEventHandler {
-    private final ChatMessage chatMessage;
-    private final int userCount;
-    private final int userId;
-    private final String messageText;
-    private final boolean hasLocation;
-    private final double latitude;
-    private final double longitude;
-    private final String username;
+    private static final int userCount = 20;
+    private static final int userId = 4;
+    private static final String messageText = "Test";
+    private static final boolean hasLocation = true;
+    private static final double latitude = -0.2d;
+    private static final double longitude = 1.21d;
+    private static final String username = "Test User";
+
+    private static final ChatMessage chatMessage = new ChatMessage(userId, messageText, hasLocation,
+            new LatLng(latitude, longitude), username, 0);
 
     public MessageParsingTest() {
-        this.userCount = 20;
-        this.userId = 4;
-        this.messageText = "test";
-        this.hasLocation = true;
-        this.latitude = -0.2d;
-        this.longitude = 1.21d;
-        this.username = "TestUser";
-        this.chatMessage = new ChatMessage(this.userId, this.messageText, this.hasLocation,
-                new LatLng(this.latitude, this.longitude), this.username, 0);
-
         MessageDelegater.getInstance().setReceiver(this);
     }
 
     public void testMessagePosted() {
         Bundle bundle = new Bundle();
         bundle.putString("identifier", "BROADCAST_MESSAGE");
-        bundle.putString("user_id", String.valueOf(this.userId));
-        bundle.putString("message_text", this.messageText);
-        bundle.putString("has_location", String.valueOf(this.hasLocation));
-        bundle.putString("latitude", String.valueOf(this.latitude));
-        bundle.putString("longitude", String.valueOf(this.longitude));
-        bundle.putString("username", String.valueOf(this.username));
+        bundle.putString("user_id", String.valueOf(userId));
+        bundle.putString("message_text", messageText);
+        bundle.putString("has_location", String.valueOf(hasLocation));
+        bundle.putString("latitude", String.valueOf(latitude));
+        bundle.putString("longitude", String.valueOf(longitude));
+        bundle.putString("username", String.valueOf(username));
 
         assertTrue(MessageDelegater.getInstance().handleMessage(bundle));
     }
@@ -53,7 +44,7 @@ public class MessageParsingTest extends AndroidTestCase implements MessageEventH
     public void testNodeEntered() {
         Bundle bundle = new Bundle();
         bundle.putString("identifier", "NODE_ENTER");
-        bundle.putString("user_id", String.valueOf(this.userId));
+        bundle.putString("user_id", String.valueOf(userId));
 
         assertTrue(MessageDelegater.getInstance().handleMessage(bundle));
     }
@@ -61,7 +52,7 @@ public class MessageParsingTest extends AndroidTestCase implements MessageEventH
     public void testNodeLeft() {
         Bundle bundle = new Bundle();
         bundle.putString("identifier", "NODE_LEAVE");
-        bundle.putString("user_id", String.valueOf(this.userId));
+        bundle.putString("user_id", String.valueOf(userId));
 
         assertTrue(MessageDelegater.getInstance().handleMessage(bundle));
     }
@@ -69,8 +60,8 @@ public class MessageParsingTest extends AndroidTestCase implements MessageEventH
     public void testGotServerInfo() {
         Bundle bundle = new Bundle();
         bundle.putString("identifier", "SERVER_STATUS");
-        bundle.putString("user_id", String.valueOf(this.userId));
-        bundle.putString("user_count", String.valueOf(this.userCount));
+        bundle.putString("user_id", String.valueOf(userId));
+        bundle.putString("user_count", String.valueOf(userCount));
 
 
         assertTrue(MessageDelegater.getInstance().handleMessage(bundle));
@@ -78,28 +69,28 @@ public class MessageParsingTest extends AndroidTestCase implements MessageEventH
 
     @Override
     public void messagePosted(ChatMessage message) {
-        assertEquals(this.userId, message.getUserID());
-        assertEquals(this.messageText, message.getMsg());
-        assertEquals(this.hasLocation, message.isHasLocation());
-        assertEquals(String.valueOf(this.latitude), message.getLatitude());
-        assertEquals(String.valueOf(this.longitude), message.getLongitude());
-        assertEquals(this.username, message.getUsername());
+        assertEquals(userId, message.getUserID());
+        assertEquals(messageText, message.getMsg());
+        assertEquals(hasLocation, message.isHasLocation());
+        assertEquals(String.valueOf(latitude), message.getLatitude());
+        assertEquals(String.valueOf(longitude), message.getLongitude());
+        assertEquals(username, message.getUsername());
         assertTrue(message.hasFixedColor());
     }
 
     @Override
     public void nodeEntered(int userId) {
-        assertEquals(this.userId, userId);
+        assertEquals(userId, userId);
     }
 
     @Override
     public void nodeLeft(int userId) {
-        assertEquals(this.chatMessage.getUserID(), userId);
+        assertEquals(chatMessage.getUserID(), userId);
     }
 
     @Override
-    public void gotServerInfo(int userCount, int userId) {
-        assertEquals(this.userCount, userCount);
-        assertEquals(this.chatMessage.getUserID(), userId);
+    public void gotServerInfo(int userCount, int userId, int radius) {
+        assertEquals(userCount, userCount);
+        assertEquals(chatMessage.getUserID(), userId);
     }
 }

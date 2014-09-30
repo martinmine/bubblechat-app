@@ -130,14 +130,13 @@ public class InitiatorActivity extends Activity implements LocationReceiver,
      * @param userId The assigned user/node id that has been given to us.
      */
     @Override
-    public void gotServerInfo(int userCount, int userId) {
-        // go to main activity
-
+    public void gotServerInfo(int userCount, int userId, int radius) {
         setLoadingText(R.string.initiator_loading_done);
         MessageDelegater.getInstance().setReceiver(null);
         Intent intent = new Intent(getBaseContext(), MainActivity.class);
         intent.putExtra("user_count", userCount);
         intent.putExtra("user_id", userId);
+        intent.putExtra("radius", radius);
         this.locationProvider.setLocationListener(null);
         startActivity(intent);
         finish();

@@ -41,6 +41,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     private static List<Integer> ignoredUsers = new LinkedList<Integer>();
     private static int currentUserID = -1;
     private static int userCount;
+    private static int radius;
 
     private GcmHelper gcm;
     private int longPressedMsgPosition = -1;
@@ -71,11 +72,14 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
 
         Intent intent = getIntent();
 
-        this.currentUserID = intent.getIntExtra("user_id", currentUserID);
-        this.userCount = intent.getIntExtra("user_count", userCount);
+        currentUserID = intent.getIntExtra("user_id", currentUserID);
+        userCount = intent.getIntExtra("user_count", userCount);
+        radius = intent.getIntExtra("radius", radius);
+
 
         intent.removeExtra("user_id");
         intent.removeExtra("user_count");
+        intent.removeExtra("radius");
 
         populateListView();
         MessageDelegater.getInstance().setReceiver(this);
@@ -143,14 +147,15 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
      * @param userId The assigned user/node id that has been given to us.
      */
     @Override
-    public void gotServerInfo(final int userCount, final int userId) {
+    public void gotServerInfo(final int userCount, final int userId, final int radius) {
         Log.i("gcm", "Got server info count: " + userCount + ", your user ID: " + userId);
-        if (this.currentUserID != userId) {
-            this.currentUserID = userId;
+        if (currentUserID != userId) {
+            currentUserID = userId;
             showStatusMessage(R.string.chatmessage_reconnect);
         }
 
-        this.userCount = userCount;
+        MainActivity.userCount = userCount;
+        MainActivity.radius = radius;
 
         runOnUiThread(new Runnable() {
             @Override

@@ -32,6 +32,7 @@ public interface MessageEventHandler {
      * that we have been authenticated to the server.
      * @param userCount Amount of connected nodes/users within the area.
      * @param userId The assigned user/node id that has been given to us.
+     * @param radius Radius of the current bubble/broadcast radius in meters
      */
-    void gotServerInfo(int userCount, int userId);
+    void gotServerInfo(int userCount, int userId, int radius);
 }

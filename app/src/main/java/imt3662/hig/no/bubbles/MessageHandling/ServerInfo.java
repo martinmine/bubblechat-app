@@ -14,7 +14,8 @@ public class ServerInfo implements MessageEventParser {
     public void parse(MessageEventHandler handler, Bundle message) {
         int userId = Integer.valueOf(message.getString("user_id"));
         int userCount = Integer.valueOf(message.getString("user_count"));
-        handler.gotServerInfo(userCount, userId);
+        int radius = Integer.valueOf(message.getString("radius"));
+        handler.gotServerInfo(userCount, userId, radius);
     }
 
     @Override
