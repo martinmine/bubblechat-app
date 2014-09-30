@@ -33,19 +33,7 @@ public class MapsActivity extends FragmentActivity {
     }
 
     /**
-     * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
-     * installed) and the map has not already been instantiated.. This will ensure that we only ever
-     * call {@link #setUpMap()} once when {@link #mMap} is not null.
-     * <p>
-     * If it isn't installed {@link SupportMapFragment} (and
-     * {@link com.google.android.gms.maps.MapView MapView}) will show a prompt for the user to
-     * install/update the Google Play services APK on their device.
-     * <p>
-     * A user can return to this FragmentActivity after following the prompt and correctly
-     * installing/updating/enabling the Google Play services. Since the FragmentActivity may not
-     * have been completely destroyed during this process (it is likely that it would only be
-     * stopped or paused), {@link #onCreate(Bundle)} may not be called again so we should call this
-     * method in {@link #onResume()} to guarantee that it will be called.
+     * Sets up the map if it is possible to do so (i.e., the
      */
     private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
@@ -64,30 +52,30 @@ public class MapsActivity extends FragmentActivity {
      * This is where we can add markers or lines, add listeners or move the camera. In this case, we
      */
     private void setUpMap() {
-
+        int userRadius;
         double userLatitude;
         double userLongitude;
         double trackedMessageLatitude;
         double trackedMessageLongitude;
 
         Intent intent = getIntent();
+        String radius = intent.getStringExtra("RADIUS");
         String latitude = intent.getStringExtra("LATITUDE");
         String longitude = intent.getStringExtra("LONGITUDE");
         String tracedMessageLatitude = intent.getStringExtra("TRACED_LATITUDE");
         String tracedMessageLongitude = intent.getStringExtra("TRACED_LONGITUDE");
         String tracedMessageUsername = intent.getStringExtra("TRACED_USERNAME");
 
-        if (latitude != null && longitude != null) {
+        if (latitude != null && longitude != null && radius != null) {
             if (latitude.length() > 0 && longitude.length() > 0) {
-
+                userRadius = Integer.parseInt(radius);
                 userLatitude = Double.parseDouble(latitude);
                 userLongitude = Double.parseDouble(longitude);
                 // Setting user position with marker and circle displaying broadcasting area
-                position(new LatLng(userLatitude, userLongitude), 10000);
+                position(new LatLng(userLatitude, userLongitude), userRadius);
 
                 if(tracedMessageLatitude != null && tracedMessageLongitude != null) {
                     if (tracedMessageLatitude.length() > 0 && tracedMessageLongitude != null) {
-
                         trackedMessageLatitude = Double.parseDouble(tracedMessageLatitude);
                         trackedMessageLongitude = Double.parseDouble(tracedMessageLongitude);
                         // If a username was found for the tracked message

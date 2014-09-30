@@ -275,6 +275,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
         intent.putExtra("LATITUDE", locationProvider.getLastKnownLatitude());
         intent.putExtra("LONGITUDE", locationProvider.getLastKnownLongitude());
+        intent.putExtra("RADIUS", String.valueOf(this.radius));
         startActivity(intent);
         return true;
     }
@@ -290,7 +291,6 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
                 adapter.notifyDataSetChanged();
             }
         };
-
         handler.post(action);
     }
 
