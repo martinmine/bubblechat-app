@@ -208,7 +208,8 @@ public class GcmHelper {
      * Stops pinging the server
      */
     public void stopPining() {
-        this.pinger.cancel();
+        if (this.pinger != null)
+            this.pinger.cancel();
         this.pinger = null;
     }
 }
