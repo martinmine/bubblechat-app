@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:title="@string/msg_long_click_track_map"
+    <item android:title="Find on map"
         android:id="@+id/findOnMap"></item>
-    <item android:title="@string/msg_long_click_ignore"
+    <item android:title="Ignore"
         android:id="@+id/ignore"></item>
 </menu>

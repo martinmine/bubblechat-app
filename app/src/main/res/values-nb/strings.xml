@@ -4,6 +4,7 @@
     <string name="action_settings">Innstillinger</string>
 
     <string name="title_activity_maps">Kart</string>
+    <string name="title_activity_initiator">BubbleChat</string>
     <string name="initiator_loading_text">Lager din boble</string>
     <string name="initiator_loading_location">Henter lokasjon</string>
     <string name="initiator_loading_pending_device_registration">Lager såpevann</string>
@@ -17,13 +18,4 @@
     <string name="chatmessage_someone_left">Noen har forlatt bobla</string>
     <string name="chatmessage_reconnect">Du er tilbake i bobla</string>
     <string name="error_compass_not_fount">Kunne ikke orientere kartet: Finner ikke noe kompass</string>
-    <string name="map_marker_you">Deg</string>
-    <string name="map_anon_user">Ukjent bruker</string>
-    <string name="google_maps_key" templateMergeStrategy="preserve">YOUR_KEY_HERE</string>
-    <string name="main_button_send">Send</string>
-    <string name="main_field_enter_message">Skriv melding:</string>
-    <string name="main_title">Brukerlokasjon</string>
-    <string name="msg_long_click_track_map">Finn på kart</string>
-    <string name="msg_long_click_ignore">Ignorer</string>
-
 </resources>
