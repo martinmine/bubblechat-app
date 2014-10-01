@@ -48,6 +48,7 @@ class ChatListAdapter extends ArrayAdapter<ChatMessage> {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 view.showContextMenu();
+                view.performClick();
                 return true;
             }
         };
@@ -70,7 +71,7 @@ class ChatListAdapter extends ArrayAdapter<ChatMessage> {
 
         Spinner spinner = (Spinner) rv.findViewById(R.id.msgSpinner);
 
-        if (currentMessage.hasFixedColor() == false) {
+        if (!currentMessage.hasFixedColor()) {
             spinner.setVisibility(View.INVISIBLE);
             spinner.setOnTouchListener(null);
             convertView.setClickable(true); // Avoid long key press (haha, tricked u!)

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="google_maps_key" templateMergeStrategy="preserve" tools:ignore="MissingTranslation">AIzaSyCNYLXW3vMXYflKQQUxYSANAGwbHdraCio</string>
 
     <string name="app_name">Bubbles</string>
     <string name="action_settings">Settings</string>
 
     <string name="title_activity_maps">Map</string>
 
-    <string name="title_activity_initiator">BubbleChat</string>
     <string name="initiator_loading_text">Creating your bubble</string>
     <string name="initiator_loading_location">Tracking location</string>
     <string name="initiator_loading_pending_device_registration">Making soap water</string>
@@ -19,12 +19,10 @@
     <string name="chatmessage_kicked_reconnect">Your bubble burst! Trying to reconnect</string>
     <string name="chatmessage_someone_left">Someone left your bubble</string>
     <string name="chatmessage_reconnect">You have been reconnected</string>
-    <string name="error_compass_not_fount">Unable to orient map: No compass found</string>
     <string name="map_marker_you">You</string>
     <string name="map_anon_user">Unknown user</string>
-    <string name="google_maps_key" templateMergeStrategy="preserve" tools:ignore="MissingTranslation">AIzaSyCNYLXW3vMXYflKQQUxYSANAGwbHdraCio</string>
-
-
-
-
+    <string name="main_button_send">Send</string>
+    <string name="main_message_textfield">Type message:</string>
+    <string name="message_longclick_findmap">Find on map</string>
+    <string name="message_longclick_ignoreuser">Ignore</string>
 </resources>

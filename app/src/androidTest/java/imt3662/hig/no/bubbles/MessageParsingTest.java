@@ -20,6 +20,7 @@ public class MessageParsingTest extends AndroidTestCase implements MessageEventH
     private static final double latitude = -0.2d;
     private static final double longitude = 1.21d;
     private static final String username = "Test User";
+    private static final int radius = 20;
 
     private static final ChatMessage chatMessage = new ChatMessage(userId, messageText, hasLocation,
             new LatLng(latitude, longitude), username, 0);
@@ -62,7 +63,7 @@ public class MessageParsingTest extends AndroidTestCase implements MessageEventH
         bundle.putString("identifier", "SERVER_STATUS");
         bundle.putString("user_id", String.valueOf(userId));
         bundle.putString("user_count", String.valueOf(userCount));
-
+        bundle.putString("radius", String.valueOf(radius));
 
         assertTrue(MessageDelegater.getInstance().handleMessage(bundle));
     }
@@ -89,8 +90,9 @@ public class MessageParsingTest extends AndroidTestCase implements MessageEventH
     }
 
     @Override
-    public void gotServerInfo(int userCount, int userId, int radius) {
+    public void gotServerInfo(int userCount, int userId, int serverRadius) {
         assertEquals(userCount, userCount);
         assertEquals(chatMessage.getUserID(), userId);
+        assertEquals(radius, serverRadius);
     }
 }

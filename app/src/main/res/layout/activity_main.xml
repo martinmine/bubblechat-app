@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:divider="@android:color/transparent"
         android:background="#FFF"
-        android:layout_above="@+id/relativeLayout"></ListView>
+        android:layout_above="@+id/relativeLayout"/>
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -23,13 +23,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="Send"
+            android:text="@string/main_button_send"
             android:onClick="newMessage"
             android:id="@+id/button" />
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Type message:"
+            android:hint="@string/main_message_textfield"
             android:id="@+id/editText"
             android:layout_toLeftOf="@id/button"/>
 
