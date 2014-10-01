@@ -48,6 +48,7 @@ class ChatListAdapter extends ArrayAdapter<ChatMessage> {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 view.showContextMenu();
+                view.performClick();
                 return true;
             }
         };
