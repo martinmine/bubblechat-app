@@ -78,6 +78,13 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         MessageDelegater.getInstance().setReceiver(this);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LatLng loc = this.locationProvider.getLastKnownLocation();
+        gcm.sendMessage(new ServerStatusRequest(loc.latitude, loc.longitude));
+    }
+
     /**
      * Called once a message was failed to be sent to gcm.
      * In that case, we should display an error message to the user.
@@ -203,7 +210,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
         if (editText.getText().length() > 0 && this.currentUserID > 0) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-            boolean track = prefs.getBoolean(getString(R.string.preference_key_trackme), false);
+            boolean track = prefs.getBoolean(getString(R.string.preference_key_trackme), true);
             String username = prefs.getString(getString(R.string.preference_key_username), "");
 
             ChatMessage newMsg = new ChatMessage(this.currentUserID,
