@@ -120,7 +120,7 @@ public class MapsActivity extends FragmentActivity implements SensorEventListene
     public void onSensorChanged(SensorEvent sensorEvent) {
         if (mMap != null && sensorEvent.values.length > 0) {
             CameraPosition currentPlace = new CameraPosition.Builder()
-                    .target(this.userPosition)
+                    .target(this.userPosition).zoom(10.0f)
                     .bearing(sensorEvent.values[0]).build();
             mMap.moveCamera(CameraUpdateFactory.newCameraPosition(currentPlace));
         }
