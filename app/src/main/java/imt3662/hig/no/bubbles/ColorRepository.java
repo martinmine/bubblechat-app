@@ -1,6 +1,7 @@
 package imt3662.hig.no.bubbles;
 
 import android.graphics.Color;
+import android.util.SparseIntArray;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,11 +13,11 @@ import java.util.Map;
 public class ColorRepository {
     private float divider;
     private float lastValue;
-    private Map<Integer, Integer> usedColors;
+    private SparseIntArray usedColors;
 
     private ColorRepository() {
         this.divider = 1;
-        this.usedColors = new HashMap<Integer, Integer>();
+        this.usedColors = new SparseIntArray();
     }
 
     private static ColorRepository instance;
@@ -55,8 +56,9 @@ public class ColorRepository {
      * @return A color value.
      */
     public int getColor(int id) {
-        if (usedColors.containsKey(id)) {
-            return usedColors.get(id);
+        int colorId = this.usedColors.get(id, 0);
+        if (colorId != 0) {
+            return colorId;
         }
         else {
             float hue = 360f * getNextColor();
