@@ -288,11 +288,10 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
         gcm.stopPining();
         gcm.sendMessage(new DestroyNode());
-        Log.w("MainActivity", "got rekd");
     }
 }
 
