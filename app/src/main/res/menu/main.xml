@@ -1,6 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".MainActivity" >
+    tools:context=".MainActivity"
+    tools:ignore="AppCompatResource">
     <item android:id="@+id/action_settings"
         android:icon="@drawable/settings"
         android:title="@string/action_settings"
@@ -18,10 +19,8 @@
 
     <item
         android:id="@+id/number_users"
-        android:title="0"
+        android:title=""
         android:orderInCategory="99"
         android:showAsAction="always"
          />
-
-
 </menu>
