@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
+
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -57,6 +59,7 @@ public class MapsActivity extends FragmentActivity {
         String tracedMessageLatitude = intent.getStringExtra("TRACED_LATITUDE");
         String tracedMessageLongitude = intent.getStringExtra("TRACED_LONGITUDE");
         String tracedMessageUsername = intent.getStringExtra("TRACED_USERNAME");
+        Log.w("TRACK",tracedMessageLatitude);
 
         if (latitude != null && longitude != null && radius != null
                 && !latitude.isEmpty() && !longitude.isEmpty() && !radius.isEmpty()) {
@@ -68,6 +71,7 @@ public class MapsActivity extends FragmentActivity {
                     tracedMessageLongitude != null && !tracedMessageLongitude.isEmpty()) {
                 double trackedMessageLatitude = Double.valueOf(tracedMessageLatitude);
                 double trackedMessageLongitude = Double.valueOf(tracedMessageLongitude);
+                Log.w("TRACK",String.valueOf(trackedMessageLatitude));
 
                 // If a username was found for the tracked message
                 if (!tracedMessageUsername.isEmpty()) {

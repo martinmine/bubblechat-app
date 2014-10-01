@@ -210,6 +210,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
                     String.valueOf(editText.getText()), track,
                     locationProvider.getLastKnownLocation(),
                     username, ChatMessage.USER_MESSAGE);
+            Log.w("TRACK",newMsg.getLatitude());
 
             gcm.sendMessage(new PostChatMessage(newMsg));
             addChatMessage(newMsg);
@@ -252,6 +253,7 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
                 intent.putExtra("TRACED_USERNAME", msg.getUsername());
                 intent.putExtra("LATITUDE", locationProvider.getLastKnownLatitude());
                 intent.putExtra("LONGITUDE", locationProvider.getLastKnownLongitude());
+                intent.putExtra("RADIUS", String.valueOf(this.radius));
                 startActivity(intent);
 
                 return true;
