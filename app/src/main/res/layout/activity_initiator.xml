@@ -4,17 +4,17 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:weightSum="1"
-    android:background="#ffa6e1ff">
+    android:weightSum="1">
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="fill_parent"
+        android:background="#ff1fff00">
 
         <ProgressBar
             style="?android:attr/progressBarStyleLarge"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/progressBar"
             android:background="@drawable/loadscreenbg"
 
@@ -22,7 +22,10 @@
             android:clickable="false"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_alignParentBottom="true" />
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="true" />
 
         <TextView
             android:layout_width="wrap_content"

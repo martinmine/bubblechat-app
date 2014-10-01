@@ -33,8 +33,6 @@ public class InitiatorActivity extends Activity implements LocationReceiver,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initiator);
 
-        this.getActionBar().hide();
-
         if (!GcmHelper.checkPlayServices(this)) {
             // TODO show error message that the user needs to upgrade google play services
             return;

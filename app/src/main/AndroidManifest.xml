@@ -21,9 +21,10 @@
 
         <activity
             android:name=".InitiatorActivity"
-            android:label="Bubbles"
+            android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden">
+            android:configChanges="orientation|keyboardHidden"
+            android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
