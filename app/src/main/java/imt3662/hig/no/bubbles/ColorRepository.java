@@ -3,9 +3,6 @@ package imt3662.hig.no.bubbles;
 import android.graphics.Color;
 import android.util.SparseIntArray;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Generates and assigns colors to user-IDs.
  * Created by Martin on 14/09/27.
