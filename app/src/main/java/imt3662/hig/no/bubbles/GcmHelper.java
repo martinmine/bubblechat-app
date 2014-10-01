@@ -105,7 +105,7 @@ public class GcmHelper {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString(PROPERTY_REG_ID, "");
             editor.putInt(PROPERTY_APP_VERSION, appVersion);
-            editor.commit();
+            editor.apply();
 
             new AsyncTask<Object, Void, Void>() {
                 @Override
@@ -141,7 +141,7 @@ public class GcmHelper {
         this.registrationId = id;
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(PROPERTY_REG_ID, id);
-        editor.commit();
+        editor.apply();
     }
 
     /**

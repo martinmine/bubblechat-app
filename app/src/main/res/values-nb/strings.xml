@@ -18,4 +18,6 @@
     <string name="chatmessage_someone_left">Noen har forlatt bobla</string>
     <string name="chatmessage_reconnect">Du er tilbake i bobla</string>
     <string name="error_compass_not_fount">Kunne ikke orientere kartet: Finner ikke noe kompass</string>
+    <string name="map_marker_you">Deg</string>
+    <string name="map_anon_user">Ukjent bruker</string>
 </resources>
