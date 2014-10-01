@@ -70,8 +70,6 @@ public class GcmHelper {
         new AsyncTask<MessageResponse, Void, Void>() {
             @Override
             protected Void doInBackground(MessageResponse... params) {
-                assert (params.length == 1);
-
                 int messageId = lastMessageId.incrementAndGet();
                 MessageResponse message = params[0];
 
@@ -112,10 +110,6 @@ public class GcmHelper {
             new AsyncTask<Object, Void, Void>() {
                 @Override
                 protected Void doInBackground(Object... params) {
-                    assert (params.length == 2);
-                    assert (params[0] instanceof SharedPreferences);
-                    assert (params[1] instanceof DeviceRegisteredListener);
-
                     SharedPreferences prefs = (SharedPreferences) params[0];
                     DeviceRegisteredListener receiver = (DeviceRegisteredListener) params[1];
 
