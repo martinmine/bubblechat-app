@@ -68,15 +68,11 @@ public class MainActivity extends Activity implements MessageEventHandler, Messa
             showStatusMessage(R.string.chatmessage_welcome);
 
         Intent intent = getIntent();
-
-        currentUserID = intent.getIntExtra("user_id", currentUserID);
-        userCount = intent.getIntExtra("user_count", userCount);
-        radius = intent.getIntExtra("radius", radius);
-
-
-        intent.removeExtra("user_id");
-        intent.removeExtra("user_count");
-        intent.removeExtra("radius");
+        if (intent.hasExtra("user_id")) {
+            currentUserID = intent.getIntExtra("user_id", currentUserID);
+            userCount = intent.getIntExtra("user_count", userCount);
+            radius = intent.getIntExtra("radius", radius);
+        }
 
         populateListView();
         MessageDelegater.getInstance().setReceiver(this);
