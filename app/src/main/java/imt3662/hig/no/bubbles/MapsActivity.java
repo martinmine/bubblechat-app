@@ -59,7 +59,6 @@ public class MapsActivity extends FragmentActivity {
         String tracedMessageLatitude = intent.getStringExtra("TRACED_LATITUDE");
         String tracedMessageLongitude = intent.getStringExtra("TRACED_LONGITUDE");
         String tracedMessageUsername = intent.getStringExtra("TRACED_USERNAME");
-        Log.w("TRACK",tracedMessageLatitude);
 
         if (latitude != null && longitude != null && radius != null
                 && !latitude.isEmpty() && !longitude.isEmpty() && !radius.isEmpty()) {

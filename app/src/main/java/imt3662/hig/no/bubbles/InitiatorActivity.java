@@ -40,11 +40,6 @@ public class InitiatorActivity extends Activity implements LocationReceiver,
 
         this.gcm = GcmHelper.get(this, this);
 
-        SharedPreferences prefs = getSharedPreferences(MainActivity.class.getSimpleName(),
-                Context.MODE_PRIVATE);
-
-        MessageDelegater.getInstance().setReceiver(this);
-        this.gcm.beginRegistering(prefs, getAppVersion(this), this);
         try {
             this.locationProvider = LocationProvider.get(this, this);
         }
@@ -52,6 +47,14 @@ public class InitiatorActivity extends Activity implements LocationReceiver,
             Log.w("PROVIDER","UNABLE TO GET PROVIDER:   " + e.getMessage());
             TextView loadingMessage = (TextView) findViewById(R.id.loadText);
             loadingMessage.setText(R.string.initiator_loading_unable_to_get_provider);
+        }
+
+        if (this.locationProvider != null) {
+            SharedPreferences prefs = getSharedPreferences(MainActivity.class.getSimpleName(),
+                    Context.MODE_PRIVATE);
+
+            MessageDelegater.getInstance().setReceiver(this);
+            this.gcm.beginRegistering(prefs, getAppVersion(this), this);
         }
     }
 
